@@ -1,0 +1,111 @@
+/* 
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 25 juil. 2018, 11:59:13
+    Author     : cdi315
+*/
+
+/* Les balises traditionnelles : */
+hr
+{
+    height: 4px;
+    border: none;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+td
+{
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+th
+{
+    padding-top: 2px;
+    padding-bottom: 2px;
+    text-decoration: underline; /* Titre souligné */
+    border-bottom-color: orange;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}
+
+/* Les "class" : */
+.bordgauchedoubleorange
+{
+    border-left-width: 5px;
+    border-left-style: double;
+    border-left-color: orange;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.lignegrise
+{
+    color: silver;
+    background-color: silver;
+}
+
+.ligneorange
+{
+    color: orange;
+    background-color: orange;
+}
+
+.ligneverteclaire
+{
+    color: lime;
+    background-color: lime;
+}
+
+.lignevertefoncee
+{
+    color: green;
+    background-color: green;
+}
+
+.tableau        
+{
+    color: yellow; /* Écrire en jaune ... */
+    background-color: #66b0ff; /* sur fond bleu */
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: 100%;
+}        
+
+
+
+/* Les "id" : */
+#team
+{
+    color: orange; /* Écrire en orange ... */
+    background-color: black; /* sur fond noir */
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left: 8px;
+}
+
+#teammini
+{
+    color: orange; /* Écrire en orange ... */
+    background-color: black; /* sur fond noir */
+    font-family: monospace, serif;
+    font-size: 9pt;
+    font-weight: bold; /* Gras */
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left: 8px;
+}
+
+#teamtitre
+{
+    color: orange; /* Écrire en orange ... */
+    background-color: black; /* sur fond noir */
+    margin-top: 0px;
+    margin-bottom: 0px;
+    text-decoration: underline; /* Titre souligné */
+    padding-left: 8px;
+}

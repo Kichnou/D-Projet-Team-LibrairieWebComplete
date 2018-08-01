@@ -24,7 +24,7 @@ Rechercher :
 <%-- bouton evenements --%>
 <form action="Controller" method="post">
     <input type="hidden" name="section" value="evenements">
-    <input type="submit" name="doIt">
+    <input type="submit" name="doIt" value="Evenement">
 </form>
 
 <%-- bouton Coup de coeur --%>

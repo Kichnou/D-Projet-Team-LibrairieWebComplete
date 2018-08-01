@@ -7,6 +7,9 @@
         <title>JSP Page</title>
     </head>
     <body>
+        <jsp:include page="../Header.jsp" flush="true"/>
+        <jsp:include page="Themes.jsp" flush="true"/>
+        
         <h1>Résultat recherche</h1>
 
         <c:forEach var="l" items="${liste}">

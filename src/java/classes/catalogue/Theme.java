@@ -1,5 +1,6 @@
 package classes.catalogue;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Theme {
+public class Theme implements Serializable {
     
     //ATTRIBUTS
     ///////////////////////////////////////////////////////////

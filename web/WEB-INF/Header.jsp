@@ -36,7 +36,10 @@
         <%-- PANIER --%>
 
         <div>
-            <a href="Controller?section=panier">Panier</a>
+            <form action="Controller" method="post">
+                <input type="hidden" name="section" value="panier">
+                <input type="submit" name="doIt" value="Panier">
+            </form>
         </div>
 
         <%-- EVENEMENTS --%>

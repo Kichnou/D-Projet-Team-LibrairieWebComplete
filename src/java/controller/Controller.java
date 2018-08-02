@@ -519,6 +519,7 @@ public class Controller extends HttpServlet {
 
             String[] checkBox = request.getParameterValues("critereRecherche");
 
+
             if (checkBox != null) {
                 for (int i = 0; i < checkBox.length; i++) {
                     if (checkBox[i].equals("auteur")) {

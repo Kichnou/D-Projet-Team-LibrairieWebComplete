@@ -12,6 +12,8 @@
         <title>Création d'un nouveau compte client</title>
     </head>
     <body>
+        <jsp:include page="../Header.jsp" flush="true"/>
+        <jsp:include page="../catalogue/Themes.jsp" flush="true"/>
         <h3>Création d'un nouveau compte client :</h3>
         <form action='Controller' method='post'>
             <input type="hidden" name="section" value="clientCreationCompte" />
@@ -30,5 +32,6 @@
             <input type='submit' name='validerCreationCompte' value='Valider' />
         </form>
         <font color='red'>${messageErreurCreationCompteClient}</font>
+        <jsp:include page="../bottom.jsp" flush="true" />
     </body>
 </html>

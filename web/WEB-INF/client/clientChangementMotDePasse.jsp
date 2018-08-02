@@ -12,6 +12,9 @@
         <title>Changement de votre mot de passe</title>
     </head>
     <body>
+        <jsp:include page="../Header.jsp" flush="true"/>
+        <jsp:include page="../catalogue/Themes.jsp" flush="true"/>
+        
         <h3>Changement de votre mot de passe :</h3>
         <form action='Controller' method='post'>
             <input type="hidden" name="section" value="clientChangementMotDePasse" />
@@ -23,6 +26,7 @@
             <input type='submit' name='validerNouveauMotDePasse' value='Valider' />
         </form>
         <font color='red'>${messageErreurChangementMotDePasse}</font>
-	TODO : cf JFrameChangementMotDePasseEmploye.java
+	<!-- TODO : cf JFrameChangementMotDePasseEmploye.java -->
+        <jsp:include page="../bottom.jsp" flush="true" />
     </body>
 </html>

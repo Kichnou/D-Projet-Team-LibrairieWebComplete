@@ -13,6 +13,7 @@
 }
 
 .sidebar {
+    float: left;
     border : 3px black solid;
     box-decoration-break: clone;
     height:50%;

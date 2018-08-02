@@ -13,6 +13,8 @@ import classes.catalogue.Theme;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -53,6 +55,7 @@ public class Controller extends HttpServlet {
         Cookie cookieClientConnecte;
         Cookie cookieNbTentatives;
         Integer nombreTentativesDejaFaites;
+        Long numeroClient = 0L;
         String civiliteClient;
         String dateNaissClient;
         String eMailClient;
@@ -139,6 +142,12 @@ public class Controller extends HttpServlet {
             request.setAttribute("messageErreurFatale", ex.getMessage());
         }
         
+        //BeanClient :
+        BeanClient client = (BeanClient) session.getAttribute("client");
+        if (client == null) {
+            client = new BeanClient();
+            session.setAttribute("client", client);
+        }
         
         if (section == null || "accueil".equals(section)) {
             url = "/WEB-INF/Accueil.jsp";
@@ -152,14 +161,8 @@ public class Controller extends HttpServlet {
             System.out.println("dbg section clientChangementMotDePasse : IN");            
             url = "/WEB-INF/client/clientChangementMotDePasse.jsp";
 
-            
-            BeanClient client = (BeanClient) session.getAttribute("client");
-            if (client == null) {
-                client = new BeanClient();
-                session.setAttribute("client", client);
-            }
             /*
-            TODO...
+            TODOUUU...
             */
             request.setAttribute("cliCivilite", client.getCliCivilite());
             request.setAttribute("cliNom", client.getCliNom());
@@ -204,20 +207,26 @@ public class Controller extends HttpServlet {
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"connecterClient" :
             if (request.getParameter("connecterClient") != null) {
-                BeanClient client = (BeanClient) session.getAttribute("client");
-                if (client == null) {
-                    client = new BeanClient();
-                    session.setAttribute("client", client);
-                }
 
                 /*
-                TODODEV : code à ajouter ici, ou pas ...
+                TODOUUUDEV : code à ajouter ici, ou pas ...
                 */
 
                 //Lire l'adresse e-mail et le mot de passe saisis :
                 eMailClient = request.getParameter("email");
                 motDePasseSaisi = request.getParameter("password");
 
+                try {
+                    //En déduire le numéro du client :
+                    numeroClient = client.getNumClientFromEMailClient(
+                            connect.getInstance(), eMailClient);
+                } catch(Exception ex) {
+                    //Le message de l'exception sera affiché en rouge dans la
+                    //page clientConnexion.jsp :
+                    request.setAttribute("messageErreurConnexionClient",
+                            ex.getMessage());
+                }
+                
                 //Par défaut, le mot de passe saisi par le client n'est pas
                 //correct :
                 boolean motDePasseOk = false;
@@ -228,7 +237,7 @@ public class Controller extends HttpServlet {
 
                 //Lire le nombre de tentatives déjà faites dans le cookie :
                 cookieNbTentatives = getCookie(request.getCookies(), "essai" +
-                        eMailClient);
+                        numeroClient);
                 if (cookieNbTentatives == null) {
                     nombreTentativesDejaFaites = 0;
                 } else {
@@ -262,11 +271,11 @@ public class Controller extends HttpServlet {
                     */
 
                     request.setAttribute("welcome", eMailClient);
-                    cookieClientConnecte = new Cookie("connecte" + eMailClient,
+                    cookieClientConnecte = new Cookie("connecte" + numeroClient,
                             eMailClient);
                     response.addCookie(cookieClientConnecte);
 
-                    cookieNbTentatives = new Cookie("essai" + eMailClient, "");
+                    cookieNbTentatives = new Cookie("essai" + numeroClient, "");
                     cookieNbTentatives.setMaxAge(0);
                     response.addCookie(cookieNbTentatives);
 
@@ -289,12 +298,12 @@ public class Controller extends HttpServlet {
 
 
                     cookieNbTentatives = getCookie(request.getCookies(),
-                            "essai" + eMailClient);
+                            "essai" + numeroClient);
                     if (cookieNbTentatives == null) {
-                        cookieNbTentatives = new Cookie("essai" + eMailClient,
+                        cookieNbTentatives = new Cookie("essai" + numeroClient,
                                 "*");
                     } else {
-                        cookieNbTentatives = new Cookie("essai" + eMailClient,
+                        cookieNbTentatives = new Cookie("essai" + numeroClient,
                                 cookieNbTentatives.getValue() + "*");
                     }
                     if (cookieNbTentatives.getValue().length() > 3) {
@@ -319,13 +328,8 @@ public class Controller extends HttpServlet {
             
             url = "/WEB-INF/client/clientConsultation.jsp";
 
-            BeanClient client = (BeanClient) session.getAttribute("client");
-            if (client == null) {
-                client = new BeanClient();
-                session.setAttribute("client", client);
-            }
             /*
-            TODO...
+            TODOUUU...
             */
             request.setAttribute("cliCivilite", client.getCliCivilite());
             request.setAttribute("cliNom", client.getCliNom());
@@ -348,13 +352,8 @@ public class Controller extends HttpServlet {
 			
             url = "/WEB-INF/client/clientCreationCompte.jsp";
 
-            BeanClient client = (BeanClient) session.getAttribute("client");
-            if (client == null) {
-                client = new BeanClient();
-                session.setAttribute("client", client);
-            }
             /*
-            TODO...
+            TODOUUU...
             */
             request.setAttribute("cliNom", client.getCliNom());
             request.setAttribute("cliPrenom", client.getCliPrenom());
@@ -424,9 +423,20 @@ public class Controller extends HttpServlet {
                 //Récuperer l'e-mail du client :
                 eMailClient = request.getParameter("email");
 
+                try {
+                    //En déduire le numéro du client :
+                    numeroClient = client.getNumClientFromEMailClient(
+                            connect.getInstance(), eMailClient);
+                } catch(Exception ex) {
+                    //Le message de l'exception sera affiché en rouge dans la
+                    //page clientConnexion.jsp :
+                    request.setAttribute("messageErreurConnexionClient",
+                            ex.getMessage());
+                }
+                
                 //Chercher le cookie "connecte" :
                 cookieClientConnecte = getCookie(request.getCookies(),
-                        "connecte" + eMailClient);
+                        "connecte" + numeroClient);
                 if (cookieClientConnecte == null) {
                     //TODOQ/PB : anomalie ???
                 } else {

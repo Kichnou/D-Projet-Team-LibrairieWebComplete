@@ -160,8 +160,8 @@ public class BeanClient implements Serializable {
     /*======================== Méthode(s) publique(s) ========================*/
 
     /*
-     * TODO : VA servir pour la création d'un nouveau client :
-     * Cependant, si se n'est pas déjà fait, il faudra penser à gueuler en cas de mail déjà existant
+     * Pour la création d'un nouveau client :
+     * TODO : Cependant, si se n'est pas déjà fait, il faudra penser à gueuler en cas de mail déjà existant
      * Ou bien est-ce qu'on est passé à côté parce qu'on n'a pas réfléchi aux contraintes ?
      * Et voir si on peut intercepter avec un try catch approprié ...
      * @param connexion
@@ -229,7 +229,7 @@ public class BeanClient implements Serializable {
             //Parenthèse fermante de la liste des valeurs de la requête INSERT :
             requete += valeurs + ")";
 
-            System.out.println("dbg requete ajout client:\n" + requete);
+            System.out.println("dbg requête ajout client :\n" + requete);
             
             
             PreparedStatement prepstmt = connexion.prepareStatement(requete);
@@ -302,15 +302,15 @@ public class BeanClient implements Serializable {
                 prepstmt.close();
             } catch(Exception ex) {
                 throw new Exception("Fermeture de l'instruction lors de " +
-                        "l'insertion du nouveau client :\n" + ex.getMessage());
+                        "l'insertion du nouveau client :<br />" + ex.getMessage());
             }
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de l'insertion du nouveau " +
-                    "client :\n" + sqlEx.getErrorCode() + " " +
+                    "client :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         } catch (Exception ex) {
             throw new Exception("Exception lors de l'insertion du nouveau " +
-                    "client :\n" + ex.getMessage());
+                    "client :<br />" + ex.getMessage());
         }
 
         try {
@@ -318,7 +318,7 @@ public class BeanClient implements Serializable {
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la fermeture de la " +
                     "connexion servant lors de l'insertion du nouveau " +
-                    "client :\n" + sqlEx.getErrorCode() + " " +
+                    "client :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         }
     }
@@ -341,7 +341,7 @@ public class BeanClient implements Serializable {
             System.out.println("dbg requête màj mdp clt = " +
                     requeteModificationMotDePasseClient);
         
-                            //Créer un objet de la classe MotDePasseSQL :
+            //Créer un objet de la classe MotDePasseSQL :
             MotDePasseSQL monMDP = new MotDePasseSQL(connexion,
                     nouveauMotDePasse);
             
@@ -359,17 +359,17 @@ public class BeanClient implements Serializable {
                 prepstmt.close();
             } catch(Exception ex) {
                 throw new Exception("Fermeture de l'instruction lors de la " +
-                        "modification du mot de passe du client :\n" +
+                        "modification du mot de passe du client :<br />" +
                         ex.getMessage());
             }
             
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la modification du mot " +
-                    "de passe du client :\n" + sqlEx.getErrorCode() + " " +
+                    "de passe du client :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         } catch (Exception ex) {
             throw new Exception("Exception lors de la modification du mot " +
-                    "de passe du client :\n" + ex.getMessage());
+                    "de passe du client :<br />" + ex.getMessage());
         }
 
         try {
@@ -377,23 +377,93 @@ public class BeanClient implements Serializable {
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la fermeture de la " +
                     "connexion servant lors de la modification du mot de " +
-                    "passe du client :\n" + sqlEx.getErrorCode() + " " +
+                    "passe du client :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         }
     }
+
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    public Long getNumClientFromEMailClient(Connection connexion, String eMailSaisi) throws Exception {
+
+        boolean loginIncorrect = false;        
+        Long numeroClient = 0L;
+        
+        //Déterminer si le login (e-mail) du client est correct ou non :        
+        try {
+            
+            /*
+            Déterminer le nombre de clients qui sont ACTIFS et qui ont un
+            login (e-mail) identique au login (e-mail) qui a été saisi :
+            */
+            String requete = "SELECT COUNT(*) FROM Client WHERE cliEmail = ?" +
+                    " AND cliStatut = 1"; //todo hmap(Actif) TODOPB : valeur en dur => est-ce licite ?
+            
+            PreparedStatement prepstmt = connexion.prepareStatement(requete,
+                    ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
+                
+            prepstmt.setString(1,eMailSaisi);
+            
+            ResultSet rsNumeroClient = prepstmt.executeQuery();
+
+            //Tentative de passer à l'enregistrement suivant :
+            rsNumeroClient.next();
+            //Détermination du nombre d'enregistrements dans le ResultSet :
+            if (rsNumeroClient.getInt(1) == 0) {
+                //Le login n'a pas été trouvé :
+                System.out.println("dbg gNCFEMC login non trouvé");                
+                loginIncorrect = true;
+            } else {
+                //Le login a bien été trouvé.
+                System.out.println("dbg gNCFEMC login TROUVÉ !!!!!!");                
+                
+                numeroClient = rsNumeroClient.getLong("cliNumClient");
+                
+//TODEL                //Créer un objet de la classe Employe à partir du login saisi :
+//TODEL                Employe unEmploye = new Employe(                          //FLC
+//TODEL                        //FLC
+//TODEL                        maFenetrePrincipale.getMaConnexionJdbc(), eMailSaisi);
+
+                
+            }
+            
+            if (loginIncorrect)
+                throw new Exception("L'e-mail est incorrect !");
+            
+            try {
+                rsNumeroClient.close();
+            } catch(Exception ex) {
+                throw new Exception("Fermeture du résultat lors de la " +
+                        "détermination du numéro du client :<br />" + ex.getMessage());
+            }
+            
+            try {
+                prepstmt.close();
+            } catch(Exception ex) {
+                throw new Exception("Fermeture de l'instruction lors " +
+                        "de la détermination du numéro du client :<br />" +
+                        ex.getMessage());
+            }
+        } catch (SQLException sqlEx) {
+            throw new Exception("Erreur SQL lors de la détermination du " +
+                    "numéro du client :<br />" + sqlEx.getErrorCode() + " " +
+                    sqlEx.getMessage());
+        } catch (Exception ex) {
+            throw new Exception("Exception lors de la détermination du " +
+                    "numéro du client :<br />" + ex.getMessage());
+        }
+
+        try {
+            connexion.close();
+        } catch (SQLException sqlEx) {
+            throw new Exception("Erreur SQL lors de la fermeture de la " +
+                    "connexion servant à déterminer le numéro du client :<br />" +
+                    sqlEx.getErrorCode() + " " + sqlEx.getMessage());
+        }
+        
+        return numeroClient;
+    }
     
     
     
@@ -423,16 +493,16 @@ public class BeanClient implements Serializable {
             
             ResultSet rsNombreDeLogin = prepstmt.executeQuery();
 
-            //Tentative de passer à l'enregistrement suivant
+            //Tentative de passer à l'enregistrement suivant :
             rsNombreDeLogin.next();
             //Détermination du nombre d'enregistrements dans le ResultSet :
             if (rsNombreDeLogin.getInt(1) == 0) {
                 //Le login n'a pas été trouvé :
-                //System.out.println("dbg login non trouvé");                
+                System.out.println("dbg mdpEstCorrect login non trouvé");                
                 loginOuMDPIncorrect = true;
             } else {
                 //Le login a bien été trouvé.
-                //System.out.println("dbg login TROUVÉ !!!!!!");                
+                System.out.println("dbg mdpEstCorrect login TROUVÉ !!!!!!");                
                 
 //TODEL                //Créer un objet de la classe Employe à partir du login saisi :
 //TODEL                Employe unEmploye = new Employe(                          //FLC
@@ -442,7 +512,7 @@ public class BeanClient implements Serializable {
                 motDePasseLu = cliMdp;
                 //C'est le "grain de sel"
                 motDePasseCompl = cliMpdCompl;
-                //System.out.println("dbg motDePasseLu affecté.");
+                System.out.println("dbg mdpEstCorrect motDePasseLu affecté.");
 
 ///////////////////todel@end                try {
                 //Créer un objet de la classe MotDePasseSQL :
@@ -458,7 +528,7 @@ public class BeanClient implements Serializable {
 */                
                 if ( ! motDePasseValide) {
                     //Si le mot de passe qui a été saisi est INVALIDE ! :
-                    //System.out.println("dbg motDePasseValide = false.");
+                    System.out.println("dbg mdpEstCorrect motDePasseValide = false.");
                     /*
                       Par conséquent, incrémenter le nombre de tentatives
                       (infructueuses) de saisie du mot de passe.
@@ -468,7 +538,8 @@ public class BeanClient implements Serializable {
                     //connexion infructueuses …
                     if (nombreTentativesDejaFaites >= 3) {
                         // "Verrouiller" le client :
-                        //System.out.println("dbg tododev : le client va être verrouillé !!!!!!!");
+                        System.out.println("dbg mdpEstCorrect tododev : le "+
+                                "client va être verrouillé !!!!!!!");
                         //À la troisième tentative infructueuse …
                         /*
                             TODOQ : est-ce qu'on "bloque" le compte client ?
@@ -480,8 +551,8 @@ public class BeanClient implements Serializable {
                         //l'utilisateur :
                         throw new Exception("Vous avez effectué au moins " +
                                 "trois tentatives de connexion " +
-                                "infructueuses.\nAussi, votre compte a été " +
-                                "bloqué.\nVeuillez contacter un " +
+                                "infructueuses.<br />Aussi, votre compte a " +
+                                "été bloqué.<br />Veuillez contacter un " +
                                 "administrateur afin qu'il débloque votre " +
                                 "compte utilisateur.");
                     } else {
@@ -490,8 +561,8 @@ public class BeanClient implements Serializable {
                         //l'utilisateur :
                         //NE PAS générer d'exception ici.
                         throw new Exception("Le mot de passe que vous avez "+
-                                "saisi est invalide.\nVeuillez tenter de le "+
-                                "saisir à nouveau.\n\nIl vous reste " +
+                                "saisi est invalide.<br />Veuillez tenter de " +
+                                "le saisir à nouveau.<br />Il vous reste " +
                                 ((nombreTentativesRestantes >= 2)?
                                 nombreTentativesRestantes + " tentatives.":
                                 "une toute dernière tentative !"));
@@ -507,22 +578,22 @@ public class BeanClient implements Serializable {
                 rsNombreDeLogin.close();
             } catch(Exception ex) {
                 throw new Exception("Fermeture du résultat lors du contrôle " +
-                        "du mot de passe :\n" + ex.getMessage());
+                        "du mot de passe :<br />" + ex.getMessage());
             }
             
             try {
                 prepstmt.close();
             } catch(Exception ex) {
                 throw new Exception("Fermeture de l'instruction lors " +
-                        "du contrôle du mot de passe :\n" + ex.getMessage());
+                        "du contrôle du mot de passe :<br />" + ex.getMessage());
             }
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors du contrôle du mot de " +
-                    "passe :\n" + sqlEx.getErrorCode() + " " +
+                    "passe :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         } catch (Exception ex) {
-            throw new Exception("Exception lors du contrôle du mot de " +
-                    "passe :\n" + ex.getMessage());
+            throw new Exception("Erreur lors du contrôle du mot de " +
+                    "passe :<br />" + ex.getMessage());
         }
 
         try {
@@ -530,7 +601,7 @@ public class BeanClient implements Serializable {
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la fermeture de la " +
                     "connexion servant à déterminer si le mot de passe est " +
-                    "correct :\n" + sqlEx.getErrorCode() + " " +
+                    "correct :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         }
         

@@ -84,7 +84,7 @@ public class BeanInfos implements Serializable {
             stmt.close();
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la lecture des " +
-                    "informations :\n" + sqlEx.getErrorCode() + " " +
+                    "informations :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         }
 
@@ -92,7 +92,7 @@ public class BeanInfos implements Serializable {
             connexion.close();
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la fermeture de la " +
-                    "connexion servant à lire les informations :\n" +
+                    "connexion servant à lire les informations :<br />" +
                     sqlEx.getErrorCode() + " " + sqlEx.getMessage());
         }
     }

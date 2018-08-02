@@ -264,18 +264,18 @@ todel.end
             try {
                 rsHachage.close();
             } catch(Exception ex) {
-                throw new Exception("Fermeture du résultat lors du hachage :\n" +
-                        ex.getMessage());
+                throw new Exception("Fermeture du résultat lors du hachage :" +
+                        "<br />" + ex.getMessage());
             }
             
             try {
                 prepstmt.close();
             } catch(Exception ex) {
                 throw new Exception("Fermeture de l'instruction lors " +
-                        "du hachage :\n" + ex.getMessage());
+                        "du hachage :<br />" + ex.getMessage());
             }
         } catch (SQLException sqlEx) {
-            throw new Exception("Erreur SQL lors du hachage :\n" +
+            throw new Exception("Erreur SQL lors du hachage :<br />" +
                     sqlEx.getErrorCode() + " " + sqlEx.getMessage());
         }
 
@@ -283,7 +283,7 @@ todel.end
             connexion.close();
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la fermeture de la " +
-                    "connexion servant à traiter le mot de passe :\n" +
+                    "connexion servant à traiter le mot de passe :<br />" +
                     sqlEx.getErrorCode() + " " + sqlEx.getMessage());
         }
         

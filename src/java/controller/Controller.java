@@ -87,10 +87,10 @@ public class Controller extends HttpServlet {
         }
         
         BeanPanier lePanier = (BeanPanier) session
-                .getAttribute("BeanCommande");
+                .getAttribute("beanPanier");
         if (lePanier == null) {
             lePanier = new BeanPanier();
-            session.setAttribute("BeanCommande", lePanier);
+            session.setAttribute("beanPanier", lePanier);
         }
 
         if (catalogue.getMesThemes().isEmpty()) {
@@ -508,8 +508,10 @@ public class Controller extends HttpServlet {
             
             request.setAttribute("motRecherche", request.getParameter("motRecherche"));
             request.setAttribute("liste", resultatRecherche.values());
+            
             if(request.getParameter("doIt") != null){
                 lePanier.add(connect.getInstance(), request.getParameter("livIsbn"));
+                session.setAttribute("beanPanier", lePanier);
             }
 
         }
@@ -607,6 +609,8 @@ public class Controller extends HttpServlet {
         
         if ("panier".equals(section)) {
             url = "/WEB-INF/commande/jspPanier.jsp";
+            
+            request.setAttribute("list", lePanier.getPanier().values());
         }
         
         if ("participant".equals(request.getParameter("section"))){

@@ -14,7 +14,7 @@
 
         <c:forEach var="l" items="${liste}">
             <c:if test="${l.image != null}">
-                <img src="${l.image}" height="100" width="70">
+                <img src="${l.image}" height="100" width="70">                
             </c:if>
 
             ${l.titre}

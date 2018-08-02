@@ -1,0 +1,10 @@
+.entete  {
+    .image {
+        float: left;
+    }
+    titre, sousTitre {
+        display: block;
+        float: right;
+    }
+}
+

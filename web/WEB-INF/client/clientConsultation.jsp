@@ -22,7 +22,7 @@
             (*) E-mail : <input type='email' name='email' value='${cliEmail}' required /><br>
             Téléphone domicile : <input type='text' name='teldomicile' value='${cliTelDomicile}' /><br>
             Téléphone mobile : <input type='text' name='telmobile' value='${cliTelMobile}' /><br>
-            TODO : btn modif/màj/enregistrer les modifs ???? : cf ce qui est fait sur www (DOC où captures)
+            <!-- TODOUUU : btn modif/màj/enregistrer les modifs ???? : cf ce qui est fait sur www (DOC où captures) -->
         </form>
         <!--
             TODO : a priori pas d'erreur en consultation, sauf en cas de modification.

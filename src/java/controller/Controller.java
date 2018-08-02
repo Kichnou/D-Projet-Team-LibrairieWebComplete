@@ -56,6 +56,7 @@ public class Controller extends HttpServlet {
         Cookie cookieClientConnecte;
         Cookie cookieNbTentatives;
         Integer nombreTentativesDejaFaites;
+        Long numeroClient = 0L;
         String civiliteClient;
         String dateNaissClient;
         String eMailClient;
@@ -142,6 +143,12 @@ public class Controller extends HttpServlet {
             request.setAttribute("messageErreurFatale", ex.getMessage());
         }
         
+        //BeanClient :
+        BeanClient leClient = (BeanClient) session.getAttribute("client");
+        if (leClient == null) {
+            leClient = new BeanClient();
+            session.setAttribute("client", leClient);
+        }
         
         if (section == null || "accueil".equals(section)) {
             url = "/WEB-INF/Accueil.jsp";
@@ -155,19 +162,13 @@ public class Controller extends HttpServlet {
             System.out.println("dbg section clientChangementMotDePasse : IN");            
             url = "/WEB-INF/client/clientChangementMotDePasse.jsp";
 
-            
-            BeanClient client = (BeanClient) session.getAttribute("client");
-            if (client == null) {
-                client = new BeanClient();
-                session.setAttribute("client", client);
-            }
             /*
-            TODO...
+            TODOUUU...
             */
-            request.setAttribute("cliCivilite", client.getCliCivilite());
-            request.setAttribute("cliNom", client.getCliNom());
-            request.setAttribute("cliPrenom", client.getCliPrenom());
-            request.setAttribute("cliEmail", client.getCliEmail());
+            request.setAttribute("cliCivilite", leClient.getCliCivilite());
+            request.setAttribute("cliNom", leClient.getCliNom());
+            request.setAttribute("cliPrenom", leClient.getCliPrenom());
+            request.setAttribute("cliEmail", leClient.getCliEmail());
 
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"validerNouveauMotDePasse" :
@@ -207,20 +208,32 @@ public class Controller extends HttpServlet {
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"connecterClient" :
             if (request.getParameter("connecterClient") != null) {
-                BeanClient client = (BeanClient) session.getAttribute("client");
-                if (client == null) {
-                    client = new BeanClient();
-                    session.setAttribute("client", client);
-                }
 
                 /*
-                TODODEV : code à ajouter ici, ou pas ...
+                TODOUUUDEV : code à ajouter ici, ou pas ...
                 */
 
                 //Lire l'adresse e-mail et le mot de passe saisis :
                 eMailClient = request.getParameter("email");
                 motDePasseSaisi = request.getParameter("password");
 
+                try {
+                    //En déduire les informations relatives au client :
+                    if (! leClient.getClientFromEMailClient(
+                            connect.getInstance(), eMailClient)) {
+                        //Le message d'erreur suivant sera affiché en rouge dans
+                        //la page clientConnexion.jsp :
+                        request.setAttribute("messageErreurConnexionClient",
+                                "Le client ayant pour adresse mail " +
+                                eMailClient + " est introuvable !");
+                    }
+                } catch(Exception ex) {
+                    //Le message de l'exception sera affiché en rouge dans la
+                    //page clientConnexion.jsp :
+                    request.setAttribute("messageErreurConnexionClient",
+                            ex.getMessage());
+                }
+                
                 //Par défaut, le mot de passe saisi par le client n'est pas
                 //correct :
                 boolean motDePasseOk = false;
@@ -231,7 +244,7 @@ public class Controller extends HttpServlet {
 
                 //Lire le nombre de tentatives déjà faites dans le cookie :
                 cookieNbTentatives = getCookie(request.getCookies(), "essai" +
-                        eMailClient);
+                        numeroClient);
                 if (cookieNbTentatives == null) {
                     nombreTentativesDejaFaites = 0;
                 } else {
@@ -240,7 +253,7 @@ public class Controller extends HttpServlet {
                 }
 
                 try {
-                    motDePasseOk = client.motDePasseEstCorrect(
+                    motDePasseOk = leClient.motDePasseEstCorrect(
                             connect.getInstance(),eMailClient,motDePasseSaisi,
                             nombreTentativesDejaFaites);
                 } catch(Exception ex) {
@@ -265,24 +278,24 @@ public class Controller extends HttpServlet {
                     */
 
                     request.setAttribute("welcome", eMailClient);
-                    cookieClientConnecte = new Cookie("connecte" + eMailClient,
+                    cookieClientConnecte = new Cookie("connecte" + numeroClient,
                             eMailClient);
                     response.addCookie(cookieClientConnecte);
 
-                    cookieNbTentatives = new Cookie("essai" + eMailClient, "");
+                    cookieNbTentatives = new Cookie("essai" + numeroClient, "");
                     cookieNbTentatives.setMaxAge(0);
                     response.addCookie(cookieNbTentatives);
 
 
                     //Alimenter les variables nécessaires pour la page :
-                    request.setAttribute("cliCivilite", client.getCliCivilite());
+                    request.setAttribute("cliCivilite", leClient.getCliCivilite());
                     //TODO QQ : exécutera OK ou pas ? Date !!!!
-                    request.setAttribute("cliDateNaiss", client.getCliDateNaiss());
-                    request.setAttribute("cliEmail", client.getCliEmail());
-                    request.setAttribute("cliNom", client.getCliNom());
-                    request.setAttribute("cliPrenom", client.getCliPrenom());
-                    request.setAttribute("cliTelDomicile", client.getCliTelDomicile());
-                    request.setAttribute("cliTelMobile", client.getCliTelMobile());
+                    request.setAttribute("cliDateNaiss", leClient.getCliDateNaiss());
+                    request.setAttribute("cliEmail", leClient.getCliEmail());
+                    request.setAttribute("cliNom", leClient.getCliNom());
+                    request.setAttribute("cliPrenom", leClient.getCliPrenom());
+                    request.setAttribute("cliTelDomicile", leClient.getCliTelDomicile());
+                    request.setAttribute("cliTelMobile", leClient.getCliTelMobile());
                 } else {
                     //L'utilisateur n'a PAS réussi à se connecter.
                     //TODO : PBPB : faut-il (ou pas) ????
@@ -292,12 +305,12 @@ public class Controller extends HttpServlet {
 
 
                     cookieNbTentatives = getCookie(request.getCookies(),
-                            "essai" + eMailClient);
+                            "essai" + numeroClient);
                     if (cookieNbTentatives == null) {
-                        cookieNbTentatives = new Cookie("essai" + eMailClient,
+                        cookieNbTentatives = new Cookie("essai" + numeroClient,
                                 "*");
                     } else {
-                        cookieNbTentatives = new Cookie("essai" + eMailClient,
+                        cookieNbTentatives = new Cookie("essai" + numeroClient,
                                 cookieNbTentatives.getValue() + "*");
                     }
                     if (cookieNbTentatives.getValue().length() > 3) {
@@ -322,21 +335,16 @@ public class Controller extends HttpServlet {
             
             url = "/WEB-INF/client/clientConsultation.jsp";
 
-            BeanClient client = (BeanClient) session.getAttribute("client");
-            if (client == null) {
-                client = new BeanClient();
-                session.setAttribute("client", client);
-            }
             /*
-            TODO...
+            TODOUUU...
             */
-            request.setAttribute("cliCivilite", client.getCliCivilite());
-            request.setAttribute("cliNom", client.getCliNom());
-            request.setAttribute("cliPrenom", client.getCliPrenom());
-            request.setAttribute("cliDateNaiss", client.getCliDateNaiss());
-            request.setAttribute("cliEmail", client.getCliEmail());
-            request.setAttribute("cliTelDomicile", client.getCliTelDomicile());
-            request.setAttribute("cliTelMobile", client.getCliTelMobile());
+            request.setAttribute("cliCivilite", leClient.getCliCivilite());
+            request.setAttribute("cliNom", leClient.getCliNom());
+            request.setAttribute("cliPrenom", leClient.getCliPrenom());
+            request.setAttribute("cliDateNaiss", leClient.getCliDateNaiss());
+            request.setAttribute("cliEmail", leClient.getCliEmail());
+            request.setAttribute("cliTelDomicile", leClient.getCliTelDomicile());
+            request.setAttribute("cliTelMobile", leClient.getCliTelMobile());
             System.out.println("dbg section clientConsultation : OUT");            
             
             
@@ -351,17 +359,12 @@ public class Controller extends HttpServlet {
 			
             url = "/WEB-INF/client/clientCreationCompte.jsp";
 
-            BeanClient client = (BeanClient) session.getAttribute("client");
-            if (client == null) {
-                client = new BeanClient();
-                session.setAttribute("client", client);
-            }
             /*
-            TODO...
+            TODOUUU...
             */
-            request.setAttribute("cliNom", client.getCliNom());
-            request.setAttribute("cliPrenom", client.getCliPrenom());
-            request.setAttribute("cliEmail", client.getCliEmail());
+            request.setAttribute("cliNom", leClient.getCliNom());
+            request.setAttribute("cliPrenom", leClient.getCliPrenom());
+            request.setAttribute("cliEmail", leClient.getCliEmail());
             
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"validerCreationCompte" :
@@ -378,7 +381,7 @@ public class Controller extends HttpServlet {
                 
                 
                 try {
-                    client.ajouterClient(connect.getInstance(), civiliteClient,
+                    leClient.ajouterClient(connect.getInstance(), civiliteClient,
                             nomClient, prenomClient, eMailClient,
                             motDePasseSaisi, dateNaissClient, telDomicileClient,
                             telMobileClient);
@@ -427,9 +430,26 @@ public class Controller extends HttpServlet {
                 //Récuperer l'e-mail du client :
                 eMailClient = request.getParameter("email");
 
+                try {
+                    //En déduire les informations relatives au client :
+                    if (! leClient.getClientFromEMailClient(
+                            connect.getInstance(), eMailClient)) {
+                        //Le message d'erreur suivant sera affiché en rouge dans
+                        //la page clientConnexion.jsp :
+                        request.setAttribute("messageErreurConnexionClient",
+                                "Le client ayant pour adresse mail " +
+                                eMailClient + " est introuvable !");
+                    }
+                } catch(Exception ex) {
+                    //Le message de l'exception sera affiché en rouge dans la
+                    //page clientConnexion.jsp :
+                    request.setAttribute("messageErreurConnexionClient",
+                            ex.getMessage());
+                }
+                
                 //Chercher le cookie "connecte" :
                 cookieClientConnecte = getCookie(request.getCookies(),
-                        "connecte" + eMailClient);
+                        "connecte" + numeroClient);
                 if (cookieClientConnecte == null) {
                     //TODOQ/PB : anomalie ???
                 } else {
@@ -528,6 +548,7 @@ public class Controller extends HttpServlet {
             ArrayList<Livre> temp = null;
 
             String[] checkBox = request.getParameterValues("critereRecherche");
+
 
             if (checkBox != null) {
                 for (int i = 0; i < checkBox.length; i++) {

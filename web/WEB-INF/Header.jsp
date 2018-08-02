@@ -29,14 +29,17 @@
         <div>
             <form action="Controller" method="post">
                 <input type="hidden" name="section" value="rechercheAvancee">
-                <input type="submit" name="doIt" value="Recherche Avancée">
+                <input type="submit" name="doIt" value="Recherche avancée">
             </form>
         </div>
 
         <%-- PANIER --%>
 
         <div>
-            <a href="Controller?section=panier">Panier</a>
+            <form action="Controller" method="post">
+                <input type="hidden" name="section" value="panier">
+                <input type="submit" name="doIt" value="Panier">
+            </form>
         </div>
 
         <%-- EVENEMENTS --%>
@@ -45,7 +48,7 @@
         <div>
             <form action="Controller" method="post">
                 <input type="hidden" name="section" value="evenements">
-                <input type="submit" name="doIt" value="Evenement">
+                <input type="submit" name="doIt" value="Événement">
             </form>
         </div>
 
@@ -53,7 +56,7 @@
         <div>
             <form action="Controller" method="post">
                 <input type="hidden" name="section" value="coupDeCoeur">
-                <input type="submit" name="doIt" value="Coup de coeur">
+                <input type="submit" name="doIt" value="Coup de c?ur">
             </form>
         </div>
 

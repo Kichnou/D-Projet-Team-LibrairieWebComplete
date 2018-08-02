@@ -69,12 +69,12 @@ public class BeanInfos implements Serializable {
 
     //Alimenter la HashMap avec les informations lues dans la table Infos :
     public void lireInformations(Connection connexion) throws Exception {
-        String requete = "SELECT * FROM Infos";
+        String requeteLectureInfos = "SELECT * FROM Infos";
 
         try {
             Statement stmt = connexion.createStatement();
 
-            ResultSet rs = stmt.executeQuery(requete);
+            ResultSet rs = stmt.executeQuery(requeteLectureInfos);
 
             while (rs.next()) {
                 this.add(rs.getString("infLibelle"),rs.getString("infInfo"));
@@ -84,7 +84,7 @@ public class BeanInfos implements Serializable {
             stmt.close();
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la lecture des " +
-                    "informations :\n" + sqlEx.getErrorCode() + " " +
+                    "informations :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         }
 
@@ -92,7 +92,7 @@ public class BeanInfos implements Serializable {
             connexion.close();
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la fermeture de la " +
-                    "connexion servant à lire les informations :\n" +
+                    "connexion servant à lire les informations :<br />" +
                     sqlEx.getErrorCode() + " " + sqlEx.getMessage());
         }
     }

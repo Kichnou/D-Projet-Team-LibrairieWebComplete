@@ -3,6 +3,8 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link rel="stylesheet" href="./style.css">
         <title>Recherche avancée</title>
     </head>
     <body>
@@ -13,13 +15,13 @@
             <input type="text" name="motRecherche">
             <input type="submit" name="doIt" value="Ok"><br>
             Critères de recherche<br>
-            <input type="checkbox" name="critereRecherche" value="auteur" checked>
+            <input type="checkbox" name="critereRecherche1" value="auteur" checked>
             Auteur
-            <input type="checkbox" name="critereRecherche" value="isbn" checked>
+            <input type="checkbox" name="critereRecherche2" value="isbn" checked>
             ISBN
-            <input type="checkbox" name="critereRecherche" value="titre" checked>
+            <input type="checkbox" name="critereRecherche3" value="titre" checked>
             Titre
-            <input type="checkbox" name="critereRecherche" value="MotCle" checked>
+            <input type="checkbox" name="critereRecherche4" value="MotCle" checked>
             Mot clé
         </form>
     </body>

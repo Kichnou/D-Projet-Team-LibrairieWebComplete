@@ -8,23 +8,23 @@
         <title>Le Panier</title>
     </head>
     <body>
-        <jsp:include page="Header.jsp" flush="true"/>
+        <%--jsp:include page="../Header.jsp" flush="true"/--%>
         <h1>Votre Panier</h1> <br/>
         
-        <c:forEach var="leLivre" items="${listLig}">
+        <c:forEach var="leLivre" items="${list}">
             
-            <c:if test="${leLivre.image != null}">
-                <img src="${leLivre.image}" height="100" width="70">
-            </c:if>
-
-            ${leLivre.titre}
-            ${leLivre.prixTtc}
+            <c:if test="${leLivre.leLivre.image != null}">
+                <img src="${leLivre.leLivre.image}" height="100" width="70">
+            </c:if><br/>
+            
+            <h4>Titre : </h4>${leLivre.leLivre.titre}<br/>
+            <h4>Quantité : </h4>${leLivre.leLivre.quantite}<br/>
+            <h4>Prix : </h4>${leLivre.leLivre.prixTtc * leLivre.leLivre.quantite}<br/>
         
         </c:forEach>
                 
         <form action="Controller" method="GET">
             <input type="hidden" name="section" value="panier"/>
         </form>
-        
     </body>
 </html>

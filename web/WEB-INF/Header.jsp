@@ -40,16 +40,12 @@ Rechercher :
 </form>
 
 
-<%-- CONNECTION UTILISATEUR --%>
+<%-- SECTION RELATIVE AU CLIENT : --%>
 
-<%-- connection --%>
 <form action="Controller" method="post">
-    login : <input type="text" name="login">
-    Mot de passe : <input type="password" name="mdp">
-    <input type="submit" name="doIt" value="Connexion"
-</form>
-
-<%-- création de compte --%>
-<form action="Controller" method="post">
-    <input type="submit" name="doIt" value="S'inscrire">
+    <input type="hidden" name="section" value="headerClient">
+    <%-- Bouton pour la connexion (d'un client déjà existant) : --%>
+    <input type="submit" name="connecterClient" value="Connexion">
+    <%-- Bouton pour la création de compte (d'un nouveau client) : --%>
+    <input type="submit" name="creerCompteClient" value="Créer votre compte">
 </form>

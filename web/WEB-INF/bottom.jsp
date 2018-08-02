@@ -4,7 +4,12 @@
     Author     : cdi315
 --%>
 
+<style type="text/css">
+<jsp:include page="css/styleBottom.css"/>
+</style>
+
 <footer>
+
     <hr class="lignevertefoncee">
     
     <table class="tableau" cellspacing=0 cellpadding=8>

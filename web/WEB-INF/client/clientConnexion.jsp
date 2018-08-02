@@ -12,6 +12,8 @@
         <title>Connexion au compte client</title>
     </head>
     <body>
+        <jsp:include page="../Header.jsp" flush="true"/>
+        <jsp:include page="../catalogue/Themes.jsp" flush="true"/>
         <h3>Connexion au compte client :</h3>
         <form action='Controller' method='post'>
             <input type="hidden" name="section" value="clientConnexion" />
@@ -29,6 +31,7 @@
             <input type='submit' name='creerCompteClient' value='Créer votre compte' />
         </form>
         <!-- Ici, il ne peut pas y avoir d'erreur. -->
+        <jsp:include page="../bottom.jsp" flush="true" />
     </body>
 </html>
 

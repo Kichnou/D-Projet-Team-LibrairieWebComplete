@@ -8,5 +8,6 @@
     <body>
         <jsp:include page="Header.jsp" flush="true"/>
         <jsp:include page="catalogue/Themes.jsp" flush="true"/>
+        <jsp:include page="bottom.jsp" flush="true" />
     </body>
 </html>

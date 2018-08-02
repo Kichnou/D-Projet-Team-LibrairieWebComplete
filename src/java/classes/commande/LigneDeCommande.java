@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package classes.catalogue;
+package classes.commande;
 
 import classes.catalogue.*;
+import classes.catalogue.Evaluations;
+import classes.catalogue.Livre;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -87,40 +89,7 @@ public class LigneDeCommande{
 //        lesLivres.clear();
 //    }
 //    
-//    public void del(String titre){
-//        lesLivres.remove(titre);
-//    }
-//    
-//    public void dec(String titre){
-//        
-//    }
-//    
-//    public void add(Livre leLivre, int quantite){
-//        this.leLivre = leLivre;
-//        this.quantite = quantite;
-//        
-//        if(lesLivres.containsKey(leLivre.getIsbn())){
-//            this.leLivre.change(this.quantite);
-//        }else{
-//           lesLivres.put(leLivre.getIsbn(), leLivre);
-//        }
-//    }
-//    
-//    public void add(Livre leLivre, String quantite){
-//        try{
-//            this.leLivre = leLivre;
-//            this.quantite = Integer.parseInt(quantite);
-//            this.add(this.leLivre, this.quantite);
-//        }catch(NumberFormatException ex){
-//            System.out.println("Erreur de conversion : "+ ex.getMessage());
-//        }
-//    }
-//    
-//    public void add(Livre leLivre){
-//        this.leLivre = leLivre;
-//        this.add(this.leLivre, 1);
-//    }
-//    
+
     public void saveLigneDeCommande(Long numCommande, Connection connexion){
         String url = "INSERT INTO LigneDeCommande (ligId, livNumIsbn, comNumBc"
                 + ", evaId, ligQte, ligPrix, ligTva)"
@@ -156,21 +125,7 @@ public class LigneDeCommande{
         return prixTtc;
     }
     
-    public ResultSet getLivre(Connection connexion, String isbn){
-        ResultSet rs = null;
-        try {
-            String query = "SELECT * FROM creationLivre WHERE livNumIsbn = ?";
-            PreparedStatement pstmt = connexion.prepareStatement(query);
-            pstmt.setString(1, isbn);
-            rs = pstmt.executeQuery();
-            
-        } catch (SQLException ex) {
-            System.out.println("Erreur SQL getLivre()"
-                    + ex.getErrorCode()+" / "+ ex.getMessage());
-        }
-        
-        return rs;
-    }
+    
     
     
     public void change(int quantite){

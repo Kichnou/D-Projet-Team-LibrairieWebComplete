@@ -2,11 +2,14 @@
 
 package beans.commande;
 
-import classes.catalogue.LigneDeCommande;
+import beans.BeanConnect;
+import classes.commande.LigneDeCommande;
 import classes.catalogue.Livre;
+import com.sun.corba.se.spi.presentation.rmi.StubAdapter;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletContext;
 
 public class BeanPanier implements Serializable{
     
@@ -131,32 +135,44 @@ public class BeanPanier implements Serializable{
         return panier.values();
     }
     
-    public void add(String isbn, int quantite){
-        LigneDeCommande lig = null;
-        
-        if(panier.containsKey(isbn)){
-            lig = panier.get(isbn);
-            lig.change(quantite);
-        }else{
-            lig = new LigneDeCommande();
-            panier.put(lig.getLeLivre().getIsbn(), lig);
-        }
+    public void add(Connection connexion, String isbn){
+        this.add(connexion, isbn, 1);
     }
     
-    public void add(Livre leLivre, String quantite){
+    public void add(Connection connexion, String isbn, String quantite){
         try{
-            this.leLivre = leLivre;
-            this.quantite = Integer.parseInt(quantite);
-            this.add(this.leLivre, this.quantite);
+            int qte = Integer.parseInt(quantite);
+            this.add(connexion, isbn, qte);
         }catch(NumberFormatException ex){
             System.out.println("Erreur de conversion : "+ ex.getMessage());
         }
     }
     
-    public void add(Livre leLivre){
-        this.leLivre = leLivre;
-        this.add(this.leLivre, 1);
-    }
+    public void add(Connection connexion, String isbn, int quantite){
+        LigneDeCommande lig = null;
+        
+        if(panier.containsKey(isbn)){
+            lig = panier.get(isbn);
+            lig.change(quantite);
+            panier.put(isbn, lig);
+        }else{
+            lig = new LigneDeCommande();
+            ResultSet rs = this.getLivre(connexion, isbn);
+            Livre leLivre = new Livre();
+            try {
+                while(rs.next()){
+                    leLivre.valoriserLivre(rs);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BeanPanier.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            lig.setLeLivre(leLivre);
+            lig.setQuantite(1);
+            
+            panier.put(lig.getLeLivre().getIsbn(), lig);
+        }
+    }  
     
     public int size(){
         return panier.size();
@@ -174,11 +190,28 @@ public class BeanPanier implements Serializable{
         panier.remove(isbn);
     }
     
-    public void dec(String isbn){
-        add(isbn, -1);
+    public void dec(Connection connexion, String isbn){
+        add(connexion, isbn, -1);
     }
     
-    
+    public ResultSet getLivre(Connection connexion, String isbn){
+        
+        
+        
+        ResultSet rs = null;
+        try {
+            String query = "SELECT * FROM creationLivre WHERE livNumIsbn = ?";
+            PreparedStatement pstmt = connexion.prepareStatement(query);
+            pstmt.setString(1, isbn);
+            rs = pstmt.executeQuery();
+            
+        } catch (SQLException ex) {
+            System.out.println("Erreur SQL getLivre()"
+                    + ex.getErrorCode()+" / "+ ex.getMessage());
+        }
+        
+        return rs;
+    }
     
     
     public void saveCommande(Connection connect){

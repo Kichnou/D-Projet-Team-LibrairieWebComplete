@@ -12,6 +12,8 @@
         <title>Consultation du compte client</title>
     </head>
     <body>
+        <jsp:include page="../Header.jsp" flush="true"/>
+        <jsp:include page="../catalogue/Themes.jsp" flush="true"/>
         <h3>Bienvenue, ${cliCivilite} ${cliNom} ${cliPrenom} :</h3>
         <form action='Controller' method='post'>
             <input type="hidden" name="section" value="clientConsultation" />
@@ -40,5 +42,6 @@
             <input type='submit' name='deconnecterClient' value='Vous déconnecter' />
         </form>
         <font color='red'>${messageErreurDeconnexionClient}</font>
+        <jsp:include page="../bottom.jsp" flush="true" />
     </body>
 </html>

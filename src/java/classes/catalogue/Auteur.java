@@ -1,6 +1,8 @@
 package classes.catalogue;
 
-public class Auteur {
+import java.io.Serializable;
+
+public class Auteur implements Serializable {
     //ATTRIBUTS
     ////////////////////////////////////////////////////////////////////
 

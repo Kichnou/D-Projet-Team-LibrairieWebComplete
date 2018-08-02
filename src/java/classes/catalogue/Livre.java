@@ -1,5 +1,6 @@
 package classes.catalogue;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -11,7 +12,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Livre {
+public class Livre implements Serializable {
 
     //ATTRIBUTS
     ////////////////////////////////////////////////////////////////

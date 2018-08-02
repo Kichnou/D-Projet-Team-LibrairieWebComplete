@@ -111,56 +111,42 @@ public class Controller extends HttpServlet {
             request.setAttribute("sousThemes", leTheme.getListeSousThemes());
         }
 
+        //Lire les informations dans la table de façon à ce qu'elles soient
+        //affichées dans bottom.jsp :
+        try {
+            BeanInfos infos = (BeanInfos) session.getAttribute("infos");
+            if (infos == null) {
+                infos = new BeanInfos();
+                session.setAttribute("infos",infos);
+            }
+
+            //Alimenter la HashMap avec les informations lues dans la table
+            //Infos :
+            infos.lireInformations(connect.getInstance());
+
+            request.setAttribute("adresse", infos.get("Adresse"));
+            request.setAttribute("krlsercli", infos.get("Courriel service clients"));
+            request.setAttribute("faxsercli", infos.get("Fax service clients"));
+            request.setAttribute("formjur", infos.get("Forme juridique"));
+            request.setAttribute("horfermeture", infos.get("Horaire fermé"));
+            request.setAttribute("horlunven", infos.get("Horaire Lundi-Vendredi"));
+            request.setAttribute("horsam", infos.get("Horaire Samedi"));
+            request.setAttribute("nom", infos.get("Nom"));
+            request.setAttribute("siren", infos.get("SIREN"));
+            request.setAttribute("siret", infos.get("SIRET"));
+            request.setAttribute("telsercli", infos.get("Téléphone service clients"));
+        } catch (Exception ex) {
+            //En cas d'exception jetée par un bean ou une classe, afficher
+            //la page d'erreur fatale :
+            url = "/WEB-INF/jspFatalError.jsp";
+            request.setAttribute("messageErreurFatale", ex.getMessage());
+        }
+        
+        
         if (section == null || "accueil".equals(section)) {
             url = "/WEB-INF/Accueil.jsp";
-
-            try {
-                BeanInfos infos = (BeanInfos) session.getAttribute("infos");
-                if (infos == null) {
-                    infos = new BeanInfos();
-                    session.setAttribute("infos",infos);
-                }
-                
-                /*
-                TODODEV : code à ajouter ici, ou pas ...
-                */
-                
-                //Alimenter la HashMap avec les informations lues dans la table
-                //Infos :
-                infos.lireInformations(connect.getInstance());
-                
-                request.setAttribute("adresse", infos.get("Adresse"));
-                request.setAttribute("krlsercli", infos.get("Courriel service clients"));
-                request.setAttribute("faxsercli", infos.get("Fax service clients"));
-                request.setAttribute("formjur", infos.get("Forme juridique"));
-                request.setAttribute("horfermeture", infos.get("Horaire fermé"));
-                request.setAttribute("horlunven", infos.get("Horaire Lundi-Vendredi"));
-                request.setAttribute("horsam", infos.get("Horaire Samedi"));
-                request.setAttribute("nom", infos.get("Nom"));
-                request.setAttribute("siren", infos.get("SIREN"));
-                request.setAttribute("siret", infos.get("SIRET"));
-                request.setAttribute("telsercli", infos.get("Téléphone service clients"));
-            } catch (Exception ex) {
-                //En cas d'exception jetée par un bean ou une classe, afficher
-                //la page d'erreur fatale :
-                url = "/WEB-INF/jspFatalError.jsp";
-                request.setAttribute("messageErreurFatale", ex.getMessage());
-            }
-            
         }
-        
-        /*
-          Si l'utilisateur a cliqué sur le bouton "Connexion" dans
-          "accueil.jsp", alors clientConnexion.jsp est exécuté :
-        */
-        
-        if ("accueilConnecter".equals(section)) {
-            System.out.println("dbg section accueilConnecter : IN");            
-            url = "/WEB-INF/client/clientConnexion.jsp";
-            System.out.println("dbg section accueilConnecter : OUT");            
-            //TODOTEST : OK, fonctionne.
-        }
-        
+       
         /*
           Si l'utilisateur a cliqué sur le bouton "Valider"
           dans "clientChangementMotDePasse.jsp" :
@@ -457,6 +443,30 @@ public class Controller extends HttpServlet {
             System.out.println("dbg section clientDeconnexion : OUT");            
             //TODOTEST : TODOverdict.
         }
+
+        /*
+          Si l'utilisateur a cliqué sur le bouton "Connexion" ou le bouton
+          "Créer votre compte" dans "Header.jsp", alors :
+        */
+        if ("headerClient".equals(section)) {
+            System.out.println("dbg section headerClient : IN");            
+
+            //Si l'utilisateur a cliqué sur le bouton nommé
+            //"connecterClient" :
+            if (request.getParameter("connecterClient") != null)
+                //Appeler la page clientConnexion.jsp :
+                url = "/WEB-INF/client/clientConnexion.jsp";
+        
+            //Si l'utilisateur a cliqué sur le bouton nommé
+            //"creerCompteClient" :
+            if (request.getParameter("creerCompteClient") != null)
+                //Appeler la page clientCreationCompte.jsp :
+                url = "/WEB-INF/client/clientCreationCompte.jsp";
+            
+            
+            System.out.println("dbg section headerClient : OUT");            
+        }    
+        
         
         if ("recherche".equals(section)) {
             url = "/WEB-INF/catalogue/ResultatRecherche.jsp";

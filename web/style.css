@@ -1,0 +1,22 @@
+.entete  {
+    .image {
+        float: left;
+    }
+    titre, sousTitre {
+        display: block;
+        float: right;
+    }
+}
+
+.flex-container {    
+    display : flex;
+}
+
+.sidebar {
+    border : 3px black solid;
+    box-decoration-break: clone;
+    height:50%;
+    width: 15%;
+    box-shadow: 3px 3px 0px gray;
+    
+}

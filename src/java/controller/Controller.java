@@ -7,10 +7,13 @@ import beans.BeanParticipant;
 import beans.catalogue.BeanCatalogue;
 import beans.commande.BeanPanier;
 import classes.catalogue.Evaluations;
+import classes.commande.LigneDeCommande;
 import classes.catalogue.Livre;
 import classes.catalogue.SousTheme;
 import classes.catalogue.Theme;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.servlet.ServletContext;
@@ -459,6 +462,7 @@ public class Controller extends HttpServlet {
             url = "/WEB-INF/catalogue/ResultatRecherche.jsp";
 
             HashMap<String, Livre> resultatRecherche = new HashMap();
+            
 
             ArrayList<Livre> temp = catalogue.resultatRechercheAuteur(request.getParameter("motRecherche"), connect.getInstance());
 
@@ -494,6 +498,10 @@ public class Controller extends HttpServlet {
             
             request.setAttribute("motRecherche", request.getParameter("motRecherche"));
             request.setAttribute("liste", resultatRecherche.values());
+            if(request.getParameter("doIt") != null){
+                lePanier.add(connect.getInstance(), request.getParameter("livIsbn"));
+            }
+
         }
 
         if ("rechercheAvancee".equals(section)) {
@@ -580,41 +588,15 @@ public class Controller extends HttpServlet {
         if ("commentaires".equals(section)) {
             url = "/WEB-INF/catalogue/Evaluations.jsp";
 
-            ArrayList<Evaluations> listeEval = catalogue.remplirEvaluations(request.getParameter("livreSelectionne"), connect.getInstance());
+            ArrayList<Evaluations> listeEval = catalogue
+                    .remplirEvaluations(request.getParameter("livreSelectionne")
+                            , connect.getInstance());
 
             request.setAttribute("listeEval", listeEval);
         }
         
         if ("panier".equals(section)) {
             url = "/WEB-INF/commande/jspPanier.jsp";
-            
-            
-            
-//            HashMap<String, Livre> map = new HashMap<>();
-//            Livre leLivre = new Livre();
-//            
-//            Connection connect = connexion.getInstance();
-//            ResultSet rs = laLigneDeCommande.getLivre(connect, request
-//                   .getParameter("livIsbn"));
-//            
-//            try {
-//                
-//                while (rs.next()){
-//                    leLivre.valoriserLivre(rs);
-//                }
-//                
-//            } catch (SQLException ex) {
-//                System.out.println("Erreur resultSet "
-//                        + ex.getErrorCode() +" / "+ ex.getMessage());
-//            }
-//            
-//            if(!map.containsKey(leLivre.getIsbn())){
-//                map.put(leLivre.getIsbn(), leLivre);
-//            }
-//            
-//            request.setAttribute("listLig", map.values());
-//            
-//            System.out.println("titre : "+ map.get(leLivre.getIsbn()));
         }
         
         if ("participant".equals(request.getParameter("section"))){

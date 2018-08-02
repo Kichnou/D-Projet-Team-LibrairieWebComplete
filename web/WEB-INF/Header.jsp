@@ -1,62 +1,83 @@
 <%-- ENTETE --%>
 
 <header>
-    <h1 class="entete">
+    <h2 class="entete">
         <image src="images/icone header.jpg" class="image">
         <em class="titre">Dark Side Bookstore</em>
         <em class="sousTitre">Come to the dark side. We have cookies.</em>
-    </h1>
+    </h2>
 </header>
 
 <%-- RECHERCHE --%>
 
 <nav>
-    Rechercher :
-    <form action="Controller" method="post">
-        <input type="hidden" name="section" value="recherche">
-        <input type="text" name="motRecherche">
-        <input type="submit" name="doIt" value="Ok">
-    </form>
+
+    <div class="flex-container">
+
+        <div>            
+            <form action="Controller" method="post" class="menu">
+                Rechercher :
+                <input type="hidden" name="section" value="recherche">
+                <input type="text" name="motRecherche">
+                <input type="submit" name="doIt" value="Ok">
+            </form>
+        </div>
 
 
-    <%-- RECHERCHE AVANCEE --%>
+        <%-- RECHERCHE AVANCEE --%>
 
-    <form action="Controller" method="post">
-        <input type="hidden" name="section" value="rechercheAvancee">
-        <input type="submit" name="doIt" value="Recherche Avancée">
-    </form>
+        <div>
+            <form action="Controller" method="post">
+                <input type="hidden" name="section" value="rechercheAvancee">
+                <input type="submit" name="doIt" value="Recherche Avancée">
+            </form>
+        </div>
 
-    <%-- PANIER --%>
+        <%-- PANIER --%>
 
-    <a href="Controller?section=panier">Panier</a>
+        <div>
+            <a href="Controller?section=panier">Panier</a>
+        </div>
 
-    <%-- EVENEMENTS --%>
+        <%-- EVENEMENTS --%>
 
-    <%-- bouton evenements --%>
-    <form action="Controller" method="post">
-        <input type="hidden" name="section" value="evenements">
-        <input type="submit" name="doIt" value="Evenement">
-    </form>
+        <%-- bouton evenements --%>
+        <div>
+            <form action="Controller" method="post">
+                <input type="hidden" name="section" value="evenements">
+                <input type="submit" name="doIt" value="Evenement">
+            </form>
+        </div>
 
-    <%-- bouton Coup de coeur --%>
-    <form action="Controller" method="post">
-        <input type="hidden" name="section" value="coupDeCoeur">
-        <input type="submit" name="doIt" value="Coup de coeur">
-    </form>
+        <%-- bouton Coup de coeur --%>
+        <div>
+            <form action="Controller" method="post">
+                <input type="hidden" name="section" value="coupDeCoeur">
+                <input type="submit" name="doIt" value="Coup de coeur">
+            </form>
+        </div>
 
-    <%-- bouton promo --%>
-    <form action="Controller" method="post">
-        <input type="hidden" name="section" value="promo">
-        <input type="submit" name="doIt" value="Promotions">
-    </form>
+        <%-- bouton promo --%>
+        <div>
+            <form action="Controller" method="post">
+                <input type="hidden" name="section" value="promo">
+                <input type="submit" name="doIt" value="Promotions">
+            </form>
+        </div>
 
 
-<%-- SECTION RELATIVE AU CLIENT : --%>
+        <%-- SECTION RELATIVE AU CLIENT : --%>
 
-<form action="Controller" method="post">
-    <input type="hidden" name="section" value="headerClient">
-    <%-- Bouton pour la connexion (d'un client déjà existant) : --%>
-    <input type="submit" name="connecterClient" value="Connexion">
-    <%-- Bouton pour la création de compte (d'un nouveau client) : --%>
-    <input type="submit" name="creerCompteClient" value="Créer votre compte">
-</form>
+        <div>
+            <form action="Controller" method="post">
+                <input type="hidden" name="section" value="headerClient">
+                <%-- Bouton pour la connexion (d'un client déjà existant) : --%>
+                <input type="submit" name="connecterClient" value="Connexion">
+                <%-- Bouton pour la création de compte (d'un nouveau client) : --%>
+                <input type="submit" name="creerCompteClient" value="Créer votre compte">
+            </form>
+        </div>
+
+    </div>
+
+</nav>

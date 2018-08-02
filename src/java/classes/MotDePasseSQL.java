@@ -23,7 +23,7 @@ import java.util.UUID;
      1. Ajout de la fonction publique motDePasseEstValide.
      2. Ajout de la fonction publique nouveauMotDePasseEstFort.
  Florent, 29/06/2018 :
-     1. Ajout de la fonction privée hacherUneChaineSQL.
+     1. Ajout de la fonction privée hacherUneChaine.
      2. Ajout des fonctions privées conversionCharArrayEnByteArray.
  Florent, 02/07/2018 :
      1. Ajout des attributs motDePasseSaisi, motDePasseCompl et mdpApresHachage.
@@ -66,31 +66,47 @@ public class MotDePasseSQL {
 
     //Contructeur à utiliser pour un changement de mot de passe (ou pour un
     //nouveau mot de passe) :
-    public MotDePasseSQL(Connection connexion, String motDePasseSaisi) throws Exception {
+    public MotDePasseSQL(Connection connexion, String motDePasseSaisi)
+            throws Exception {
         this.connexion = connexion;
         this.motDePasseSaisi = motDePasseSaisi;
+        System.out.println("dbg MdpSQL.constr2args motDePasseSaisi = <<" +
+                motDePasseSaisi + ">>.");
         //Générer un grain de sel associé au mot de passe.
         //C'est un UUID (soit 128 bits) :
         this.motDePasseCompl = genererUnUUID();
+        System.out.println("dbg MdpSQL.constr2args NOUVEAU motDePasseCompl " +
+                "= <<" + motDePasseCompl + ">>.");
 
         //Hacher le mot de passe en y mettant un grain de sel :
         this.mdpApresHachage = hacherUneChaineSQL(motDePasseSaisi,
                 motDePasseCompl,"SHA2_256");
+        System.out.println("dbg MdpSQL.constr2args mdpApresHachage = <<" +
+                mdpApresHachage + ">>.");
     }
     
     /*
      * Contructeur à utiliser lorsque le mot de passe et le "grain de sel" sont
      * connus et que l'on veut contrôler la validité d'un mot de passe saisi.
      */
-    public MotDePasseSQL(Connection connexion, String motDePasseSaisi, String motDePasseLu, String motDePasseCompl) throws Exception {
+    public MotDePasseSQL(Connection connexion, String motDePasseSaisi,
+            String motDePasseLu, String motDePasseCompl) throws Exception {
         this.connexion = connexion;
         this.motDePasseSaisi = motDePasseSaisi;
+        System.out.println("dbg MdpSQL.constr4args motDePasseSaisi = <<" +
+                motDePasseSaisi + ">>.");
         this.motDePasseLu = motDePasseLu;
+        System.out.println("dbg MdpSQL.constr4args motDePasseLu = <<" +
+                motDePasseLu + ">>.");
         this.motDePasseCompl = motDePasseCompl;
+        System.out.println("dbg MdpSQL.constr4args motDePasseCompl = <<" +
+                motDePasseCompl + ">>.");
 
         //Hacher le mot de passe en y mettant un grain de sel :
         this.mdpApresHachage = hacherUneChaineSQL(motDePasseSaisi,
                 motDePasseCompl,"SHA2_256");
+        System.out.println("dbg MdpSQL.constr4args mdpApresHachage = <<" +
+                mdpApresHachage + ">>.");
     }
     
     public String getMotDePasseSaisi() {
@@ -142,6 +158,11 @@ public class MotDePasseSQL {
      * et renvoie true si le mot de passe est correct.
      */
     public boolean motDePasseEstValide() {
+        System.out.println("dbg MdpSQL.motDePasseEstValide() IN :");
+        System.out.println("dbg mdpApresHachage = <<" + mdpApresHachage + ">>.");
+        System.out.println("dbg motDePasseLu = <<" + motDePasseLu + ">>.");
+        System.out.println("dbg Sont-ils égaux ?");
+        System.out.println("dbg MdpSQL.motDePasseEstValide() OUT :");
         return (mdpApresHachage.equals(motDePasseLu));
     }
 
@@ -172,6 +193,8 @@ public class MotDePasseSQL {
      *   instancier un MotDePasseSQL juste pour ça.
      */
     public static String genererUnUUID() {
+        System.out.println("dbg static MdpSQL.genererUnUUID() : un UUID va " +
+                "être généré.");
         return UUID.randomUUID().toString().replace("-","").toUpperCase();
     }    
 
@@ -243,40 +266,53 @@ todel.end
         
         try {
             //Récupérer le résultat du hachage : requête SQL
-            String requete = "SELECT CONVERT(VARCHAR(255), "
-                    + "HASHBYTES(?, ?),2)";
+            String requeteHachage = "SELECT CONVERT(VARCHAR(255), "
+                    + "HASHBYTES(?, CONVERT(VARCHAR(255),?,2)),2)";
 
+            System.out.println("dbg hacherUneChaineSQL requête <<" +
+                    requeteHachage + ">>.");
+            
             PreparedStatement prepstmt = connexion.
-                    prepareStatement(requete);
+                    prepareStatement(requeteHachage);
 
             prepstmt.setString(1, algo);
             //todoPB : motDePasseSaisi en Web : String en clair ????!!!!
             //todoPB : et, du coup, il transiterait en clair sur le WWW !!!!!???
             prepstmt.setString(2, motDePasseSaisi + grainDeSel);
 
+            
+            System.out.println("dbg hacherUneChaineSQL algo <<" +
+                    algo + ">>.");
+            System.out.println("dbg hacherUneChaineSQL motDePasseSaisi + " +
+                    "grainDeSel <<" + motDePasseSaisi + grainDeSel + ">>.");
+            
+            
             ResultSet rsHachage = prepstmt.executeQuery();
 
             //Tentative de passer à l'enregistrement suivant :
             rsHachage.next();
 
             resultatChaineHexadecimale = rsHachage.getString(1);
+            System.out.println("dbg hacherUneChaineSQL résultat du hachage <<" +
+                    resultatChaineHexadecimale + ">>.");
             
             try {
                 rsHachage.close();
             } catch(Exception ex) {
-                throw new Exception("Fermeture du résultat lors du hachage :" +
-                        "<br />" + ex.getMessage());
+                throw new Exception("Fermeture du résultat lors du " +
+                        "traitement du mot de passe :<br />" + ex.getMessage());
             }
             
             try {
                 prepstmt.close();
             } catch(Exception ex) {
-                throw new Exception("Fermeture de l'instruction lors " +
-                        "du hachage :<br />" + ex.getMessage());
+                throw new Exception("Fermeture de l'instruction lors du " +
+                        "traitement du mot de passe :<br />" + ex.getMessage());
             }
         } catch (SQLException sqlEx) {
-            throw new Exception("Erreur SQL lors du hachage :<br />" +
-                    sqlEx.getErrorCode() + " " + sqlEx.getMessage());
+            throw new Exception("Erreur SQL lors du traitement du mot de " +
+                    "passe :<br />" + sqlEx.getErrorCode() + " " +
+                    sqlEx.getMessage());
         }
 
         try {
@@ -290,6 +326,9 @@ todel.end
         return resultatChaineHexadecimale;
 
     }
-   
+
+    
+    
+    
     
 }

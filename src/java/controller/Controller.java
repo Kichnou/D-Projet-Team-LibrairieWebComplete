@@ -13,8 +13,6 @@ import classes.catalogue.Theme;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -143,10 +141,10 @@ public class Controller extends HttpServlet {
         }
         
         //BeanClient :
-        BeanClient client = (BeanClient) session.getAttribute("client");
-        if (client == null) {
-            client = new BeanClient();
-            session.setAttribute("client", client);
+        BeanClient leClient = (BeanClient) session.getAttribute("client");
+        if (leClient == null) {
+            leClient = new BeanClient();
+            session.setAttribute("client", leClient);
         }
         
         if (section == null || "accueil".equals(section)) {
@@ -164,10 +162,10 @@ public class Controller extends HttpServlet {
             /*
             TODOUUU...
             */
-            request.setAttribute("cliCivilite", client.getCliCivilite());
-            request.setAttribute("cliNom", client.getCliNom());
-            request.setAttribute("cliPrenom", client.getCliPrenom());
-            request.setAttribute("cliEmail", client.getCliEmail());
+            request.setAttribute("cliCivilite", leClient.getCliCivilite());
+            request.setAttribute("cliNom", leClient.getCliNom());
+            request.setAttribute("cliPrenom", leClient.getCliPrenom());
+            request.setAttribute("cliEmail", leClient.getCliEmail());
 
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"validerNouveauMotDePasse" :
@@ -217,9 +215,15 @@ public class Controller extends HttpServlet {
                 motDePasseSaisi = request.getParameter("password");
 
                 try {
-                    //En déduire le numéro du client :
-                    numeroClient = client.getNumClientFromEMailClient(
-                            connect.getInstance(), eMailClient);
+                    //En déduire les informations relatives au client :
+                    if (! leClient.getClientFromEMailClient(
+                            connect.getInstance(), eMailClient)) {
+                        //Le message d'erreur suivant sera affiché en rouge dans
+                        //la page clientConnexion.jsp :
+                        request.setAttribute("messageErreurConnexionClient",
+                                "Le client ayant pour adresse mail " +
+                                eMailClient + " est introuvable !");
+                    }
                 } catch(Exception ex) {
                     //Le message de l'exception sera affiché en rouge dans la
                     //page clientConnexion.jsp :
@@ -246,7 +250,7 @@ public class Controller extends HttpServlet {
                 }
 
                 try {
-                    motDePasseOk = client.motDePasseEstCorrect(
+                    motDePasseOk = leClient.motDePasseEstCorrect(
                             connect.getInstance(),eMailClient,motDePasseSaisi,
                             nombreTentativesDejaFaites);
                 } catch(Exception ex) {
@@ -281,14 +285,14 @@ public class Controller extends HttpServlet {
 
 
                     //Alimenter les variables nécessaires pour la page :
-                    request.setAttribute("cliCivilite", client.getCliCivilite());
+                    request.setAttribute("cliCivilite", leClient.getCliCivilite());
                     //TODO QQ : exécutera OK ou pas ? Date !!!!
-                    request.setAttribute("cliDateNaiss", client.getCliDateNaiss());
-                    request.setAttribute("cliEmail", client.getCliEmail());
-                    request.setAttribute("cliNom", client.getCliNom());
-                    request.setAttribute("cliPrenom", client.getCliPrenom());
-                    request.setAttribute("cliTelDomicile", client.getCliTelDomicile());
-                    request.setAttribute("cliTelMobile", client.getCliTelMobile());
+                    request.setAttribute("cliDateNaiss", leClient.getCliDateNaiss());
+                    request.setAttribute("cliEmail", leClient.getCliEmail());
+                    request.setAttribute("cliNom", leClient.getCliNom());
+                    request.setAttribute("cliPrenom", leClient.getCliPrenom());
+                    request.setAttribute("cliTelDomicile", leClient.getCliTelDomicile());
+                    request.setAttribute("cliTelMobile", leClient.getCliTelMobile());
                 } else {
                     //L'utilisateur n'a PAS réussi à se connecter.
                     //TODO : PBPB : faut-il (ou pas) ????
@@ -331,13 +335,13 @@ public class Controller extends HttpServlet {
             /*
             TODOUUU...
             */
-            request.setAttribute("cliCivilite", client.getCliCivilite());
-            request.setAttribute("cliNom", client.getCliNom());
-            request.setAttribute("cliPrenom", client.getCliPrenom());
-            request.setAttribute("cliDateNaiss", client.getCliDateNaiss());
-            request.setAttribute("cliEmail", client.getCliEmail());
-            request.setAttribute("cliTelDomicile", client.getCliTelDomicile());
-            request.setAttribute("cliTelMobile", client.getCliTelMobile());
+            request.setAttribute("cliCivilite", leClient.getCliCivilite());
+            request.setAttribute("cliNom", leClient.getCliNom());
+            request.setAttribute("cliPrenom", leClient.getCliPrenom());
+            request.setAttribute("cliDateNaiss", leClient.getCliDateNaiss());
+            request.setAttribute("cliEmail", leClient.getCliEmail());
+            request.setAttribute("cliTelDomicile", leClient.getCliTelDomicile());
+            request.setAttribute("cliTelMobile", leClient.getCliTelMobile());
             System.out.println("dbg section clientConsultation : OUT");            
             
             
@@ -355,9 +359,9 @@ public class Controller extends HttpServlet {
             /*
             TODOUUU...
             */
-            request.setAttribute("cliNom", client.getCliNom());
-            request.setAttribute("cliPrenom", client.getCliPrenom());
-            request.setAttribute("cliEmail", client.getCliEmail());
+            request.setAttribute("cliNom", leClient.getCliNom());
+            request.setAttribute("cliPrenom", leClient.getCliPrenom());
+            request.setAttribute("cliEmail", leClient.getCliEmail());
             
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"validerCreationCompte" :
@@ -374,7 +378,7 @@ public class Controller extends HttpServlet {
                 
                 
                 try {
-                    client.ajouterClient(connect.getInstance(), civiliteClient,
+                    leClient.ajouterClient(connect.getInstance(), civiliteClient,
                             nomClient, prenomClient, eMailClient,
                             motDePasseSaisi, dateNaissClient, telDomicileClient,
                             telMobileClient);
@@ -424,9 +428,15 @@ public class Controller extends HttpServlet {
                 eMailClient = request.getParameter("email");
 
                 try {
-                    //En déduire le numéro du client :
-                    numeroClient = client.getNumClientFromEMailClient(
-                            connect.getInstance(), eMailClient);
+                    //En déduire les informations relatives au client :
+                    if (! leClient.getClientFromEMailClient(
+                            connect.getInstance(), eMailClient)) {
+                        //Le message d'erreur suivant sera affiché en rouge dans
+                        //la page clientConnexion.jsp :
+                        request.setAttribute("messageErreurConnexionClient",
+                                "Le client ayant pour adresse mail " +
+                                eMailClient + " est introuvable !");
+                    }
                 } catch(Exception ex) {
                     //Le message de l'exception sera affiché en rouge dans la
                     //page clientConnexion.jsp :

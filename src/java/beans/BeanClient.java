@@ -33,7 +33,7 @@ public class BeanClient implements Serializable {
                                            //connecter. Les autres auront le
                                            //message "user/pwd invalide ..."
     private String cliMdp;                 //UTILISÉ
-    private String cliMpdCompl;            //UTILISÉ
+    private String cliMdpCompl;            //UTILISÉ
     //Champ auquel le client n'a pas accès : cliCommentaireInterne
     
     
@@ -145,11 +145,11 @@ public class BeanClient implements Serializable {
     }
 
     public String getCliMpdCompl() {
-        return cliMpdCompl;
+        return cliMdpCompl;
     }
 
     public void setCliMpdCompl(String cliMpdCompl) {
-        this.cliMpdCompl = cliMpdCompl;
+        this.cliMdpCompl = cliMpdCompl;
     }
 
     @Override
@@ -183,10 +183,10 @@ public class BeanClient implements Serializable {
         
         try {
             
-            //Commencer à construire la requete d'insertion avec la liste des
+            //Commencer à construire la requête d'insertion avec la liste des
             //champs obligatoires :
-            String requete = "INSERT INTO Client (cliCivilite, cliNom, " +
-                    "cliPrenom, cliEmail, cliStatut, cliMdp, cliMdpCompl";
+            String requeteInsertion = "INSERT INTO Client (cliCivilite, " +
+                    "cliNom, cliPrenom, cliEmail, cliStatut, cliMdp, cliMdpCompl";
             //TODEL String parenthèseQuery = ")";
             //TODEL String nullItemQuery = "";
 
@@ -194,19 +194,19 @@ public class BeanClient implements Serializable {
             //obligatoire, alors ajouter le nom du champs à la liste des champs :
             if(!dateNaissClient.isEmpty() || 
                     !dateNaissClient.trim().equalsIgnoreCase("")){
-                requete += ", cliDateNaiss";
+                requeteInsertion += ", cliDateNaiss";
             }
             if(!telDomicileClient.isEmpty() || 
                     !telDomicileClient.trim().equalsIgnoreCase("")){
-                requete += ", cliTelDomicile";
+                requeteInsertion += ", cliTelDomicile";
             }
             if(!telMobileClient.isEmpty() || 
                     !telMobileClient.trim().equalsIgnoreCase("")){
-                requete += ", cliTelMobile";
+                requeteInsertion += ", cliTelMobile";
             }
 
             //Parenthèse fermante de la liste des champs de la requête INSERT
-            requete += ")";
+            requeteInsertion += ")";
             
             String valeurs = " VALUES (?, ?, ?, ?, ?, ?, ?";
 
@@ -227,12 +227,12 @@ public class BeanClient implements Serializable {
             }
 
             //Parenthèse fermante de la liste des valeurs de la requête INSERT :
-            requete += valeurs + ")";
+            requeteInsertion += valeurs + ")";
 
-            System.out.println("dbg requête ajout client :\n" + requete);
+            System.out.println("dbg requête ajout client :\n" + requeteInsertion);
             
             
-            PreparedStatement prepstmt = connexion.prepareStatement(requete);
+            PreparedStatement prepstmt = connexion.prepareStatement(requeteInsertion);
             
             //Assignation des valeurs qui vont remplacer les points
             //d'interrogation :
@@ -338,7 +338,7 @@ public class BeanClient implements Serializable {
             String requeteModificationMotDePasseClient = "UPDATE Client SET "
                 + "cliMdp = ?, cliMdpCompl = ? WHERE cliNumClient = ?";
         
-            System.out.println("dbg requête màj mdp clt = " +
+            System.out.println("dbg requête màj mdp client :\n" +
                     requeteModificationMotDePasseClient);
         
             //Créer un objet de la classe MotDePasseSQL :
@@ -384,46 +384,73 @@ public class BeanClient implements Serializable {
 
     
     
-    public Long getNumClientFromEMailClient(Connection connexion, String eMailSaisi) throws Exception {
+    public boolean getClientFromEMailClient(Connection connexion, String eMailSaisi) throws Exception {
 
         boolean loginIncorrect = false;        
-        Long numeroClient = 0L;
         
         //Déterminer si le login (e-mail) du client est correct ou non :        
         try {
             
             /*
-            Déterminer le nombre de clients qui sont ACTIFS et qui ont un
-            login (e-mail) identique au login (e-mail) qui a été saisi :
-            */
-            String requete = "SELECT COUNT(*) FROM Client WHERE cliEmail = ?" +
-                    " AND cliStatut = 1"; //todo hmap(Actif) TODOPB : valeur en dur => est-ce licite ?
+             * Récupérer le(s) client(s) qui sont ACTIFS et qui ont un login
+             * (e-mail) identique au login (e-mail) qui a été saisi :
+             */
+            String requeteSelection = "SELECT * FROM Client WHERE cliEmail = " +
+                    "? AND cliStatut = 1";
+                    //todo hmap(Actif) TODOPB : valeur en dur => est-ce licite ?
             
-            PreparedStatement prepstmt = connexion.prepareStatement(requete,
+            PreparedStatement prepstmt = connexion.prepareStatement(
+                    requeteSelection,
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
                 
             prepstmt.setString(1,eMailSaisi);
             
-            ResultSet rsNumeroClient = prepstmt.executeQuery();
+            ResultSet rsClient = prepstmt.executeQuery();
 
             //Tentative de passer à l'enregistrement suivant :
-            rsNumeroClient.next();
+            rsClient.next();
             //Détermination du nombre d'enregistrements dans le ResultSet :
-            if (rsNumeroClient.getInt(1) == 0) {
+            if (rsClient.getInt(1) == 0) {
                 //Le login n'a pas été trouvé :
-                System.out.println("dbg gNCFEMC login non trouvé");                
+                System.out.println("dbg gNCFEMC login <<" + eMailSaisi + ">> non trouvé");                
                 loginIncorrect = true;
             } else {
                 //Le login a bien été trouvé.
-                System.out.println("dbg gNCFEMC login TROUVÉ !!!!!!");                
+                System.out.println("dbg gNCFEMC login <<" + eMailSaisi + ">> TROUVÉ !!!!!!");                
                 
-                numeroClient = rsNumeroClient.getLong("cliNumClient");
+                cliNumClient = rsClient.getLong("cliNumClient");
+                System.out.println("dbg gNCFEMC cliNumClient VAUT <<" + cliNumClient + ">>."); 
                 
-//TODEL                //Créer un objet de la classe Employe à partir du login saisi :
-//TODEL                Employe unEmploye = new Employe(                          //FLC
-//TODEL                        //FLC
-//TODEL                        maFenetrePrincipale.getMaConnexionJdbc(), eMailSaisi);
+                cliCivilite = rsClient.getString("cliCivilite");
+                System.out.println("dbg gNCFEMC cliCivilite VAUT <<" + cliCivilite + ">>."); 
+                
+                cliNom = rsClient.getString("cliNom");
+                System.out.println("dbg gNCFEMC cliNom VAUT <<" + cliNom + ">>."); 
+                
+                cliPrenom = rsClient.getString("cliPrenom");
+                System.out.println("dbg gNCFEMC cliPrenom VAUT <<" + cliPrenom + ">>."); 
+                
+                cliDateNaiss = rsClient.getDate("cliDateNaiss");
+                System.out.println("dbg gNCFEMC cliDateNaiss VAUT <<" + cliDateNaiss + ">>."); 
+                
+                cliEmail = rsClient.getString("cliEmail");
+                System.out.println("dbg gNCFEMC cliEmail VAUT <<" + cliEmail + ">>."); 
+
+                cliTelDomicile = rsClient.getString("cliTelDomicile");
+                System.out.println("dbg gNCFEMC cliTelDomicile VAUT <<" + cliTelDomicile + ">>."); 
+                
+                cliTelMobile = rsClient.getString("cliTelMobile");
+                System.out.println("dbg gNCFEMC cliTelMobile VAUT <<" + cliTelMobile + ">>."); 
+                
+                cliStatut = rsClient.getShort("cliStatut");
+                System.out.println("dbg gNCFEMC cliStatut VAUT <<" + cliStatut + ">>."); 
+                
+                cliMdp = rsClient.getString("cliMdp");
+                System.out.println("dbg gNCFEMC cliMdp VAUT <<" + cliMdp + ">>."); 
+
+                cliMdpCompl = rsClient.getString("cliMdpCompl");
+                System.out.println("dbg gNCFEMC cliMdpCompl VAUT <<" + cliMdpCompl + ">>."); 
 
                 
             }
@@ -432,7 +459,7 @@ public class BeanClient implements Serializable {
                 throw new Exception("L'e-mail est incorrect !");
             
             try {
-                rsNumeroClient.close();
+                rsClient.close();
             } catch(Exception ex) {
                 throw new Exception("Fermeture du résultat lors de la " +
                         "détermination du numéro du client :<br />" + ex.getMessage());
@@ -462,7 +489,7 @@ public class BeanClient implements Serializable {
                     sqlEx.getErrorCode() + " " + sqlEx.getMessage());
         }
         
-        return numeroClient;
+        return (! loginIncorrect);
     }
     
     
@@ -482,10 +509,12 @@ public class BeanClient implements Serializable {
             Déterminer le nombre de clients qui sont ACTIFS et qui ont un
             login (e-mail) identique au login (e-mail) qui a été saisi :
             */
-            String requete = "SELECT COUNT(*) FROM Client WHERE cliEmail = ?" +
-                    " AND cliStatut = 1"; //todo hmap(Actif) TODOPB : valeur en dur => est-ce licite ?
+            String requeteSelection = "SELECT COUNT(*) FROM Client WHERE " +
+                    "cliEmail = ? AND cliStatut = 1";
+                    //todo hmap(Actif) TODOPB : valeur en dur => est-ce licite ?
             
-            PreparedStatement prepstmt = connexion.prepareStatement(requete,
+            PreparedStatement prepstmt = connexion.prepareStatement(
+                    requeteSelection,
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
                 
@@ -498,11 +527,11 @@ public class BeanClient implements Serializable {
             //Détermination du nombre d'enregistrements dans le ResultSet :
             if (rsNombreDeLogin.getInt(1) == 0) {
                 //Le login n'a pas été trouvé :
-                System.out.println("dbg mdpEstCorrect login non trouvé");                
+                System.out.println("dbg mdpEstCorrect login <<" + eMailSaisi + ">> non trouvé");                
                 loginOuMDPIncorrect = true;
             } else {
                 //Le login a bien été trouvé.
-                System.out.println("dbg mdpEstCorrect login TROUVÉ !!!!!!");                
+                System.out.println("dbg mdpEstCorrect login <<" + eMailSaisi + ">> TROUVÉ !!!!!!");                
                 
 //TODEL                //Créer un objet de la classe Employe à partir du login saisi :
 //TODEL                Employe unEmploye = new Employe(                          //FLC
@@ -511,8 +540,9 @@ public class BeanClient implements Serializable {
                 //Récupération du mot de passe du client :
                 motDePasseLu = cliMdp;
                 //C'est le "grain de sel"
-                motDePasseCompl = cliMpdCompl;
-                System.out.println("dbg mdpEstCorrect motDePasseLu affecté.");
+                motDePasseCompl = cliMdpCompl;
+                System.out.println("dbg mdpEstCorrect motDePasseLu affecté : <<" + motDePasseLu + ">>.");
+                System.out.println("dbg mdpEstCorrect motDePasseCompl affecté : <<" + motDePasseCompl + ">>.");
 
 ///////////////////todel@end                try {
                 //Créer un objet de la classe MotDePasseSQL :
@@ -629,7 +659,7 @@ public class BeanClient implements Serializable {
                         equalsIgnoreCase("")){
                 requete += whereQuery;
             }
-            System.out.println("query list client : "+ requete);
+            System.out.println("dbg reuête liste clients : " + requete);
             
             Statement stmt = connexion.createStatement();
             ResultSet rs = stmt.executeQuery(requete);
@@ -651,7 +681,7 @@ public class BeanClient implements Serializable {
             
         } catch (SQLException sqlEx) {
     todo throw !!!!! 
-            System.out.println("Erreur Requete sql : "
+            System.out.println("Erreur requête SQL : "
                     + sqlEx.getErrorCode() + " / "+ sqlEx.getMessage());
         }
         
@@ -690,7 +720,8 @@ public class BeanClient implements Serializable {
                 TODO : cliMdp + cliMdpCompl
                 + "WHERE cliNumClient = ?";
         
-            System.out.println("Query = "+ requeteModificationMotDePasseClient);
+            System.out.println("dbg requête modif Mdp = " +
+                    requeteModificationMotDePasseClient);
         
             PreparedStatement prepstmt = connexion.
                     prepareStatement(requeteModificationMotDePasseClient);
@@ -713,7 +744,7 @@ TODO : oups num séquence            prepstmt.setString(9, comInterne.getText())
             
         } catch (SQLException sqlEx) {
     todo throw !!!!! 
-            System.out.println("Erreur requete modifier : "
+            System.out.println("Erreur requête modification mot de passe : "
                     + ""+ sqlEx.getErrorCode() + " " + sqlEx.getMessage());
         }
         try {

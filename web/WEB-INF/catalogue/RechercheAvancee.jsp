@@ -6,6 +6,8 @@
         <title>Recherche avancée</title>
     </head>
     <body>
+        <jsp:include page="../Header.jsp" flush="true"/>
+        <jsp:include page="Themes.jsp" flush="true"/>
         <form action="Controller" method="get">
             <input type="hidden" name="section" value="resultatRechercheAvancee">
             <input type="text" name="motRecherche">

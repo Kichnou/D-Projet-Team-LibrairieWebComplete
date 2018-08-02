@@ -4,6 +4,7 @@ import classes.catalogue.Auteur;
 import classes.catalogue.Evaluations;
 import classes.catalogue.Livre;
 import classes.catalogue.Theme;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +15,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class BeanCatalogue {
+public class BeanCatalogue implements Serializable {
 
     //ATTRIBUTS
     ////////////////////////////////////////////////////////////////

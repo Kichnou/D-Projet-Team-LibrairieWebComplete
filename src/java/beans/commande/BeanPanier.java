@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
@@ -32,10 +33,12 @@ public class BeanPanier implements Serializable{
     private String statutPayement;
     private String adresseIp;
     private HashMap<String, LigneDeCommande> panier;
+    private Float prixTtc;
     
     //****************************** Constructeur ******************************
     public BeanPanier() {
         this.panier = new HashMap<>();
+        this.prixTtc = 0F;
     }
     
     //******************************* Accesseurs *******************************
@@ -118,18 +121,24 @@ public class BeanPanier implements Serializable{
     public void setPanier(HashMap<String, LigneDeCommande> panier) {
         this.panier = panier;
     }
+
+    public Float getPrixTtc() {
+        return prixTtc;
+    }
+
+    public void setPrixTtc(Float prixTtc) {
+        this.prixTtc = prixTtc;
+    }
     
     //***************************** Autres Methodes ****************************
 
-//    public Float prixCommande(){
-//        Float prixTtc = 0.0F;
-//        
-//        panier.forEach(null);
-//        for(LigneDeCommande laLigneDeCommande : this.panier){
-//            prixTtc += laLigneDeCommande.prixTtcLigCom();
-//        }
-//        return prixTtc;
-//    }
+    public void prixCommande(){
+        
+        for(Map.Entry<String, LigneDeCommande> Collection : this.panier.entrySet()){
+            this.prixTtc += (Collection.getValue().getQuantite() * 
+                    Collection.getValue().getLeLivre().getPrixTtc());
+        }
+    }
     
     public Collection<LigneDeCommande> getlist(){
         return panier.values();
@@ -151,7 +160,7 @@ public class BeanPanier implements Serializable{
     public void add(Connection connexion, String isbn, int quantite){
         LigneDeCommande lig = null;
         
-        if(panier.containsKey(isbn)){
+        if(panier.get(isbn) != null){
             lig = panier.get(isbn);
             lig.change(quantite);
             panier.put(isbn, lig);

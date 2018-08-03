@@ -56,7 +56,7 @@
         <div>
             <form action="Controller" method="post">
                 <input type="hidden" name="section" value="coupDeCoeur">
-                <input type="submit" name="doIt" value="Coup de c?ur">
+                <input type="submit" name="doIt" value="Coup de c&#339;ur">
             </form>
         </div>
 

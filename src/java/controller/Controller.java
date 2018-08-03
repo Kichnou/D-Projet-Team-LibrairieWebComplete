@@ -43,7 +43,7 @@ public class Controller extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         //NOTA : pour ne pas être emm… par les caractères accentués (àçéèô …)
         request.setCharacterEncoding("UTF-8");
 
@@ -52,7 +52,7 @@ public class Controller extends HttpServlet {
 
         //Récupérer la section courante :
         String section = request.getParameter("section");
-        
+
         //Déclarer un certain nombre de variables :
         Cookie cookieClientConnecte;
         Cookie cookieNbTentatives;
@@ -66,7 +66,7 @@ public class Controller extends HttpServlet {
         String prenomClient;
         String telDomicileClient;
         String telMobileClient;
-        
+
         //Message en cas d'erreur lors du changement du mot de passe du client :
         //TODO : avertissement de compilation : "variable non utilisée ..."
         //TODO : voir comment je me suis débarrassé de la variable
@@ -87,7 +87,7 @@ public class Controller extends HttpServlet {
             catalogue = new BeanCatalogue();
             application.setAttribute("catalogue", catalogue);
         }
-        
+
         BeanPanier lePanier = (BeanPanier) session
                 .getAttribute("beanPanier");
         if (lePanier == null) {
@@ -119,7 +119,7 @@ public class Controller extends HttpServlet {
             BeanInfos infos = (BeanInfos) session.getAttribute("infos");
             if (infos == null) {
                 infos = new BeanInfos();
-                session.setAttribute("infos",infos);
+                session.setAttribute("infos", infos);
             }
 
             //Alimenter la HashMap avec les informations lues dans la table
@@ -154,13 +154,13 @@ public class Controller extends HttpServlet {
         if (section == null || "accueil".equals(section)) {
             url = "/WEB-INF/Accueil.jsp";
         }
-       
+
         /*
-          Si l'utilisateur a cliqué sur le bouton "Valider"
-          dans "clientChangementMotDePasse.jsp" :
-        */
+         Si l'utilisateur a cliqué sur le bouton "Valider"
+         dans "clientChangementMotDePasse.jsp" :
+         */
         if ("clientChangementMotDePasse".equals(section)) {
-            System.out.println("dbg section clientChangementMotDePasse : IN");            
+            System.out.println("dbg section clientChangementMotDePasse : IN");
             url = "/WEB-INF/client/clientChangementMotDePasse.jsp";
 
             /*
@@ -175,36 +175,35 @@ public class Controller extends HttpServlet {
             //"validerNouveauMotDePasse" :
             if (request.getParameter("validerNouveauMotDePasse") != null) {
                 /*
-                todoUUU : créer un MotDePasseSQL
-                todoUUU : call UPDATE        
-                Donc, à un moment, il y aura un prepstmt.executeUpdate();
-                todoUUU : cf Employe.        
-                */
+                 todoUUU : créer un MotDePasseSQL
+                 todoUUU : call UPDATE        
+                 Donc, à un moment, il y aura un prepstmt.executeUpdate();
+                 todoUUU : cf Employe.        
+                 */
             }
-        
-            System.out.println("dbg section clientChangementMotDePasse : OUT");            
-        
-        
+
+            System.out.println("dbg section clientChangementMotDePasse : OUT");
+
         }
-        
+
         /*
-          Si l'utilisateur a cliqué sur le bouton "Changer votre mot de passe"
-          dans "clientConsultation.jsp", alors clientChangementMotDePasse.jsp
-          est exécuté.
-        */
+         Si l'utilisateur a cliqué sur le bouton "Changer votre mot de passe"
+         dans "clientConsultation.jsp", alors clientChangementMotDePasse.jsp
+         est exécuté.
+         */
         if ("clientChangerMdp".equals(section)) {
-            System.out.println("dbg section clientChangerMdp : IN");            
+            System.out.println("dbg section clientChangerMdp : IN");
             url = "/WEB-INF/client/clientChangementMotDePasse.jsp";
-            System.out.println("dbg section clientChangerMdp : OUT");            
+            System.out.println("dbg section clientChangerMdp : OUT");
             //TODOTEST : verdict.
         }
-        
+
         /*
-          Si l'utilisateur a cliqué sur le bouton "Connexion" dans
-          "clientConnexion.jsp", alors :
-        */
+         Si l'utilisateur a cliqué sur le bouton "Connexion" dans
+         "clientConnexion.jsp", alors :
+         */
         if ("clientConnexion".equals(section)) {
-            System.out.println("dbg section clientConnexion : IN");            
+            System.out.println("dbg section clientConnexion : IN");
 
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"connecterClient" :
@@ -257,7 +256,7 @@ public class Controller extends HttpServlet {
                     motDePasseOk = leClient.motDePasseEstCorrect(
                             connect.getInstance(),eMailClient,motDePasseSaisi,
                             nombreTentativesDejaFaites);
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     //Le message de l'exception sera affiché en rouge dans la
                     //page clientConnexion.jsp :
                     request.setAttribute("messageErreurConnexionClient",
@@ -270,10 +269,9 @@ public class Controller extends HttpServlet {
                     url = "/WEB-INF/client/clientConsultation.jsp";
 
                     /*
-                      Réinitialiser le nombre de tentatives (infructueuses) de
-                      saisie du mot de passe à 0 :
-                    */
-
+                     Réinitialiser le nombre de tentatives (infructueuses) de
+                     saisie du mot de passe à 0 :
+                     */
                     request.setAttribute("welcome", eMailClient);
                     cookieClientConnecte = new Cookie("connecte" + numeroClient,
                             eMailClient);
@@ -282,7 +280,6 @@ public class Controller extends HttpServlet {
                     cookieNbTentatives = new Cookie("essai" + numeroClient, "");
                     cookieNbTentatives.setMaxAge(0);
                     response.addCookie(cookieNbTentatives);
-
 
                     //Alimenter les variables nécessaires pour la page :
                     request.setAttribute("cliCivilite", leClient.getCliCivilite());
@@ -300,7 +297,6 @@ public class Controller extends HttpServlet {
                     //L'utilisateur DOIT donc rester sur la page de départ :
                     url = "/WEB-INF/client/clientConnexion.jsp";
 
-
                     cookieNbTentatives = getCookie(request.getCookies(),
                             "essai" + numeroClient);
                     if (cookieNbTentatives == null) {
@@ -315,21 +311,17 @@ public class Controller extends HttpServlet {
                     }
                     response.addCookie(cookieNbTentatives);
 
-
                 }
-            }        
-        
-        
-        
-            System.out.println("dbg section clientConnexion : OUT");            
-        
-            
+            }
+
+            System.out.println("dbg section clientConnexion : OUT");
+
         }
-        
+
         //Section clientConsultation :
         if ("clientConsultation".equals(section)) {
-            System.out.println("dbg section clientConsultation : IN");            
-            
+            System.out.println("dbg section clientConsultation : IN");
+
             url = "/WEB-INF/client/clientConsultation.jsp";
 
             /*
@@ -348,12 +340,12 @@ public class Controller extends HttpServlet {
         }
 
         /*
-          Si l'utilisateur a cliqué sur le bouton "Valider" dans
-          "clientCreationCompte.jsp", alors :
-        */
+         Si l'utilisateur a cliqué sur le bouton "Valider" dans
+         "clientCreationCompte.jsp", alors :
+         */
         if ("clientCreationCompte".equals(section)) {
             System.out.println("dbg section clientCreationCompte : IN");
-			
+
             url = "/WEB-INF/client/clientCreationCompte.jsp";
 
             /*
@@ -366,7 +358,7 @@ public class Controller extends HttpServlet {
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"validerCreationCompte" :
             if (request.getParameter("validerCreationCompte") != null) {
-                
+
                 civiliteClient = request.getParameter("groupeCivilite");
                 dateNaissClient = "";
                 eMailClient = request.getParameter("email");
@@ -375,8 +367,7 @@ public class Controller extends HttpServlet {
                 prenomClient = request.getParameter("prenom");
                 telDomicileClient = "";
                 telMobileClient = "";
-                
-                
+
                 try {
                     leClient.ajouterClient(connect.getInstance(), civiliteClient,
                             nomClient, prenomClient, eMailClient,
@@ -390,35 +381,34 @@ public class Controller extends HttpServlet {
                             ex.getMessage());
                 }
             }
-            
-            
-            System.out.println("dbg section clientCreationCompte : OUT");            
+
+            System.out.println("dbg section clientCreationCompte : OUT");
         }
 
         /*
-          Si l'utilisateur a cliqué sur le bouton "Créez votre compte" dans
-          "clientConnexion.jsp", alors clientCreationCompte.jsp est exécuté :
-        */
+         Si l'utilisateur a cliqué sur le bouton "Créez votre compte" dans
+         "clientConnexion.jsp", alors clientCreationCompte.jsp est exécuté :
+         */
         if ("clientCreerCompte".equals(section)) {
-            System.out.println("dbg section clientCreerCompte : IN");  
-        
+            System.out.println("dbg section clientCreerCompte : IN");
+
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"creerCompteClient" :
             if (request.getParameter("creerCompteClient") != null) {
                 url = "/WEB-INF/client/clientCreationCompte.jsp";
-            }        
-        
-            System.out.println("dbg section clientCreerCompte : OUT");            
+            }
+
+            System.out.println("dbg section clientCreerCompte : OUT");
             //TODOTEST : TODOverdict.
         }
-        
+
         /*
-          Si l'utilisateur a cliqué sur le bouton "Vous déconnecter" dans
-          "clientConsultation.jsp", alors on "tue" le cookie et on retourne à
-          la page d'accueil :
-        */
+         Si l'utilisateur a cliqué sur le bouton "Vous déconnecter" dans
+         "clientConsultation.jsp", alors on "tue" le cookie et on retourne à
+         la page d'accueil :
+         */
         if ("clientDeconnexion".equals(section)) {
-            System.out.println("dbg section clientDeconnexion : IN"); 
+            System.out.println("dbg section clientDeconnexion : IN");
 
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"deconnecterClient" :
@@ -457,39 +447,38 @@ public class Controller extends HttpServlet {
                 }
             }
 
-            System.out.println("dbg section clientDeconnexion : OUT");            
+            System.out.println("dbg section clientDeconnexion : OUT");
             //TODOTEST : TODOverdict.
         }
 
         /*
-          Si l'utilisateur a cliqué sur le bouton "Connexion" ou le bouton
-          "Créer votre compte" dans "Header.jsp", alors :
-        */
+         Si l'utilisateur a cliqué sur le bouton "Connexion" ou le bouton
+         "Créer votre compte" dans "Header.jsp", alors :
+         */
         if ("headerClient".equals(section)) {
-            System.out.println("dbg section headerClient : IN");            
+            System.out.println("dbg section headerClient : IN");
 
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"connecterClient" :
-            if (request.getParameter("connecterClient") != null)
-                //Appeler la page clientConnexion.jsp :
+            if (request.getParameter("connecterClient") != null) //Appeler la page clientConnexion.jsp :
+            {
                 url = "/WEB-INF/client/clientConnexion.jsp";
-        
+            }
+
             //Si l'utilisateur a cliqué sur le bouton nommé
             //"creerCompteClient" :
-            if (request.getParameter("creerCompteClient") != null)
-                //Appeler la page clientCreationCompte.jsp :
+            if (request.getParameter("creerCompteClient") != null) //Appeler la page clientCreationCompte.jsp :
+            {
                 url = "/WEB-INF/client/clientCreationCompte.jsp";
-            
-            
-            System.out.println("dbg section headerClient : OUT");            
-        }    
-        
-        
+            }
+
+            System.out.println("dbg section headerClient : OUT");
+        }
+
         if ("recherche".equals(section)) {
             url = "/WEB-INF/catalogue/ResultatRecherche.jsp";
 
             HashMap<String, Livre> resultatRecherche = new HashMap();
-            
 
             ArrayList<Livre> temp = catalogue.resultatRechercheAuteur(request.getParameter("motRecherche"), connect.getInstance());
 
@@ -522,11 +511,12 @@ public class Controller extends HttpServlet {
                     resultatRecherche.put(l.getIsbn(), l);
                 }
             }
-            
+
             request.setAttribute("motRecherche", request.getParameter("motRecherche"));
-            request.setAttribute("liste", resultatRecherche.values());
-            
-            if(request.getParameter("doIt") != null){
+            if (!resultatRecherche.values().isEmpty()) {
+                session.setAttribute("liste", resultatRecherche.values());
+            }
+            if (request.getParameter("doIt") != null) {
                 lePanier.add(connect.getInstance(), request.getParameter("livIsbn"));
                 session.setAttribute("beanPanier", lePanier);
             }
@@ -546,7 +536,6 @@ public class Controller extends HttpServlet {
             ArrayList<Livre> temp = null;
 
             String[] checkBox = request.getParameterValues("critereRecherche");
-
 
             if (checkBox != null) {
                 for (int i = 0; i < checkBox.length; i++) {
@@ -588,7 +577,7 @@ public class Controller extends HttpServlet {
                 }
             }
 
-            request.setAttribute("liste", resultatRecherche.values());
+            session.setAttribute("liste", resultatRecherche.values());
         }
 
         if ("livresSousTheme".equals(section)) {
@@ -613,19 +602,32 @@ public class Controller extends HttpServlet {
                 }
             }
 
-            request.setAttribute("liste", leSousTheme.getListeLivre());
+            session.setAttribute("liste", leSousTheme.getListeLivre());
+        }
+        
+        if ("detailLivre".equals(section)) {
+            url = "/WEB-INF/catalogue/DetailLivre.jsp";
+            
+            ArrayList<Livre> monLivre = catalogue.resultatRechercheIsbn(request.getParameter("livIsbn"), connect.getInstance());
+            
+            Livre leLivre = null;
+            
+            for (Livre l : monLivre) {
+                leLivre = l;
+            }
+            
+            request.setAttribute("livre", leLivre);
         }
 
         if ("commentaires".equals(section)) {
             url = "/WEB-INF/catalogue/Evaluations.jsp";
 
             ArrayList<Evaluations> listeEval = catalogue
-                    .remplirEvaluations(request.getParameter("livreSelectionne")
-                            , connect.getInstance());
+                    .remplirEvaluations(request.getParameter("livreSelectionne"), connect.getInstance());
 
             request.setAttribute("listeEval", listeEval);
         }
-        
+
         if ("panier".equals(section)) {
             url = "/WEB-INF/commande/jspPanier.jsp";
             
@@ -636,22 +638,22 @@ public class Controller extends HttpServlet {
             request.setAttribute("prixTtc", lePanier.getPrixTtc());
             request.setAttribute("list", lePanier.getPanier().values());
         }
-        
-        if ("participant".equals(request.getParameter("section"))){
-           url = "/WEB-INF/rubrique/participant.jsp";
+
+        if ("participant".equals(request.getParameter("section"))) {
+            url = "/WEB-INF/rubrique/participant.jsp";
             BeanParticipant participant = (BeanParticipant) session.getAttribute("participant");
-            if (participant == null){
+            if (participant == null) {
                 participant = new BeanParticipant();
                 session.setAttribute("participant", participant);
             }
-            if(request.getParameter("doit") !=null){
+            if (request.getParameter("doit") != null) {
                 participant.setNom(request.getParameter("nom"));
                 participant.setPrenom(request.getParameter("prenom"));
                 participant.seteMail(request.getParameter("email"));
                 participant.insertParticipant(connect.getInstance());
-                request.setAttribute("participationOK","Votre participation a été enregistrée.");
+                request.setAttribute("participationOK", "Votre participation a été enregistrée.");
             }
-            
+
         }
 
         request.getRequestDispatcher(url).include(request, response);

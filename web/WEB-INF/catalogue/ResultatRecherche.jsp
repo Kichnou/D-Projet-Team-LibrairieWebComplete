@@ -11,39 +11,40 @@
     <body>
         <jsp:include page="../Header.jsp" flush="true"/>
         <jsp:include page="Themes.jsp" flush="true"/>
-        
+
         <h1>Résultat recherche</h1>
 
         <c:forEach var="l" items="${liste}">
-            <c:if test="${l.image != null}">
-                <img src="${l.image}" height="100" width="70">                
-            </c:if>
+            <a href="Controller?section=detailLivre&livIsbn=${l.isbn}">
+                <c:if test="${l.image != null}">
+                    <img src="${l.image}" height="100" width="70">                
+                </c:if>
 
-            ${l.titre}
+                ${l.titre}
 
-            <c:if test="${l.sousTitre != null}">
-                ${l.sousTitre}
-            </c:if>
+                <c:if test="${l.sousTitre != null}">
+                    ${l.sousTitre}
+                </c:if>
 
-            <c:forEach var="a" items="${l.auteurs}">
-                ${a.prenom} ${a.nom}
-            </c:forEach>
+                <c:forEach var="a" items="${l.auteurs}">
+                    ${a.prenom} ${a.nom}
+                </c:forEach>
 
-            ${l.editeur}
+                ${l.editeur}
 
-            ${l.isbn}
+                ${l.isbn}
 
-            ${l.prixTtc}
-            
-            <a href="Controller?section=commentaires&livreSelectionne=${l.isbn}">Commentaires</a>
-            
+                ${l.prixTtc}
+
+                <a href="Controller?section=commentaires&livreSelectionne=${l.isbn}">Commentaires</a>
+            </a>
+
             <form action="Controller" method="post">
                 <input type="hidden" name="section" value="recherche">
                 <input type="hidden" name="livIsbn" value="${l.isbn}">
-                <input type="hidden" name="motRecherche" value="${motRecherche}">
                 <input type="submit" name="doIt" value="Ajouter">
             </form>
-        <br>
-    </c:forEach>
-</body>
+            <br>
+        </c:forEach>
+    </body>
 </html>

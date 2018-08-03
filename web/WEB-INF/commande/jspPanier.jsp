@@ -11,20 +11,48 @@
         <%--jsp:include page="../Header.jsp" flush="true"/--%>
         <h1>Votre Panier</h1> <br/>
         
-        <c:forEach var="leLivre" items="${list}">
-            
-            <c:if test="${leLivre.leLivre.image != null}">
-                <img src="${leLivre.leLivre.image}" height="100" width="70">
-            </c:if><br/>
-            
-            <h4>Titre : </h4>${leLivre.leLivre.titre}<br/>
-            <h4>Quantité : </h4>${leLivre.leLivre.quantite}<br/>
-            <h4>Prix : </h4>${leLivre.leLivre.prixTtc * leLivre.leLivre.quantite}<br/>
+        <c:if test="${list.size() == 0}">
+            <p>Le Panier est vide !!</p>
+        </c:if>
         
-        </c:forEach>
+        <c:forEach var="lig" items="${list}">
+            
+            <c:if test="${lig.leLivre.image != null}">
                 
-        <form action="Controller" method="GET">
-            <input type="hidden" name="section" value="panier"/>
-        </form>
+                <div style="vertical-align:middle; clear: both;">
+                    
+                    <img src="${lig.leLivre.image}" height="100" width="70" 
+                         style="vertical-align:middle; float:left">
+                    
+                    <p>
+                        Titre : ${lig.leLivre.titre} <br/>
+                        Quantité : ${lig.quantite} <br/>
+                        Prix : ${lig.leLivre.prixTtc * lig.quantite} € <br/>
+                        <form action="Controller" method="GET">
+                            <input type="hidden" name="section" value="panier"/>
+                            <input type="submit" name="add" value="+"/>
+                            <input type="submit" name="dec" value="-"/>
+                            <input type="submit" name="del" value="X"/>
+                        </form>
+                    </p>
+                </div><br/>
+            </c:if>
+        </c:forEach>
+        
+        <div>
+            <form action="Controller" method="GET">
+                <input type="hidden" name="section" value="panier"/>
+                <c:if test="${list.size() != 0}">
+                    <input type="submit" name="clean" value="Vider le Panier"/><br/>
+                    PRIX TOTAL : ${prixTtc} €
+                </c:if>
+            </form> 
+            
+            
+        </div>
+        
+        
+        
+        
     </body>
 </html>

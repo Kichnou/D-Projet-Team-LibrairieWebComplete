@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -251,7 +252,7 @@ public class Controller extends HttpServlet {
                     nombreTentativesDejaFaites = cookieNbTentatives.getValue().
                             length();
                 }
-
+                
                 try {
                     motDePasseOk = leClient.motDePasseEstCorrect(
                             connect.getInstance(),eMailClient,motDePasseSaisi,
@@ -262,10 +263,6 @@ public class Controller extends HttpServlet {
                     request.setAttribute("messageErreurConnexionClient",
                             ex.getMessage());
                 }
-
-
-
-
 
                 if (motDePasseOk) {
                     //L'utilisateur a réussi à se connecter. Le contrôleur lui
@@ -533,6 +530,7 @@ public class Controller extends HttpServlet {
                 lePanier.add(connect.getInstance(), request.getParameter("livIsbn"));
                 session.setAttribute("beanPanier", lePanier);
             }
+            
 
         }
 
@@ -631,6 +629,11 @@ public class Controller extends HttpServlet {
         if ("panier".equals(section)) {
             url = "/WEB-INF/commande/jspPanier.jsp";
             
+            if(!lePanier.getPanier().isEmpty()){
+                lePanier.prixCommande();
+            }
+            
+            request.setAttribute("prixTtc", lePanier.getPrixTtc());
             request.setAttribute("list", lePanier.getPanier().values());
         }
         

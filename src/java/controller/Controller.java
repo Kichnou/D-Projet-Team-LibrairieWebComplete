@@ -635,6 +635,32 @@ public class Controller extends HttpServlet {
                 lePanier.prixCommande();
             }
             
+//            if(request.getParameter("add") != null){
+//                lePanier.add(connect.getInstance(), request.getParameter("add"));
+//            }
+//            if(request.getParameter("dec") != null){
+//                lePanier.dec(connect.getInstance(), request.getParameter("dec"));
+//            }
+//            if(request.getParameter("del") != null){
+//                lePanier.del(request.getParameter("del"));
+//            }
+//            if(request.getParameter("clean") != null){
+//                lePanier.clean();
+//            }
+            
+            if(request.getParameter("add") != null){
+                lePanier.add(connect.getInstance(), request.getParameter("isbn"));
+            }
+            if(request.getParameter("dec") != null){
+                lePanier.dec(connect.getInstance(), request.getParameter("isbn"));
+            }
+            if(request.getParameter("del") != null){
+                lePanier.del(request.getParameter("isbn"));
+            }
+            if(request.getParameter("clean") != null){
+                lePanier.clean();
+            }
+            
             request.setAttribute("prixTtc", lePanier.getPrixTtc());
             request.setAttribute("list", lePanier.getPanier().values());
         }
@@ -646,6 +672,7 @@ public class Controller extends HttpServlet {
                 participant = new BeanParticipant();
                 session.setAttribute("participant", participant);
             }
+            
             if (request.getParameter("doit") != null) {
                 participant.setNom(request.getParameter("nom"));
                 participant.setPrenom(request.getParameter("prenom"));
@@ -653,7 +680,8 @@ public class Controller extends HttpServlet {
                 participant.insertParticipant(connect.getInstance());
                 request.setAttribute("participationOK", "Votre participation a été enregistrée.");
             }
-
+            
+            
         }
 
         request.getRequestDispatcher(url).include(request, response);

@@ -520,8 +520,6 @@ public class Controller extends HttpServlet {
                 lePanier.add(connect.getInstance(), request.getParameter("livIsbn"));
                 session.setAttribute("beanPanier", lePanier);
             }
-            
-
         }
 
         if ("rechercheAvancee".equals(section)) {
@@ -631,9 +629,7 @@ public class Controller extends HttpServlet {
         if ("panier".equals(section)) {
             url = "/WEB-INF/commande/jspPanier.jsp";
             
-            if(!lePanier.getPanier().isEmpty()){
-                lePanier.prixCommande();
-            }
+            
             
 //            if(request.getParameter("add") != null){
 //                lePanier.add(connect.getInstance(), request.getParameter("add"));
@@ -650,18 +646,44 @@ public class Controller extends HttpServlet {
             
             if(request.getParameter("add") != null){
                 lePanier.add(connect.getInstance(), request.getParameter("isbn"));
+//                lePanier.prixCommande();
+                session.setAttribute("beanPanier", lePanier);
             }
             if(request.getParameter("dec") != null){
                 lePanier.dec(connect.getInstance(), request.getParameter("isbn"));
+//                lePanier.prixCommande();
+                session.setAttribute("beanPanier", lePanier);
             }
             if(request.getParameter("del") != null){
                 lePanier.del(request.getParameter("isbn"));
+                session.setAttribute("beanPanier", lePanier);
             }
             if(request.getParameter("clean") != null){
                 lePanier.clean();
             }
             
-            request.setAttribute("prixTtc", lePanier.getPrixTtc());
+            if(!lePanier.getPanier().isEmpty()){
+                lePanier.prixCommande();
+            }
+            
+            if(request.getParameter("valider") != null){
+                url = "/WEB-INF/commande/jspCommande.jsp";
+                
+                lePanier.calculNbreArticles();
+                System.out.println("nbreArticles : "+ lePanier.getNbrArticles());
+                session.setAttribute("beanPanier", lePanier);
+                
+//                cookieClientConnecte = this.getCookie(request.getCookies(),
+//                        "connecte" + numeroClient);
+//                if(cookieClientConnecte == null){
+//                    url = "/WEB-INF/client/clientConnexion.jsp";
+//                }else{
+//                    url = "jspCommande.jsp";
+//                }
+            }
+            
+            request.setAttribute("nbreArticles", lePanier.getNbrArticles());
+            request.setAttribute("prixCom", lePanier.getPrixTtc());
             request.setAttribute("list", lePanier.getPanier().values());
         }
 

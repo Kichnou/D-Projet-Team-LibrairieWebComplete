@@ -323,16 +323,8 @@ public class BeanClient implements Serializable {
         }
     }
     
-
-    
-    
-    
-    
-    
     public void modifierMotDePasseClient(Connection connexion,
             String nouveauMotDePasse) throws Exception {
-        
-        
         
         try {
             String requeteModificationMotDePasseClient = "UPDATE Client SET "
@@ -451,8 +443,6 @@ public class BeanClient implements Serializable {
 
                 cliMdpCompl = rsClient.getString("cliMdpCompl");
                 System.out.println("dbg gNCFEMC cliMdpCompl VAUT <<" + cliMdpCompl + ">>."); 
-
-                
             }
             
             if (loginIncorrect)

@@ -2,23 +2,23 @@
 
 package beans.commande;
 
-import beans.BeanConnect;
 import classes.commande.LigneDeCommande;
 import classes.catalogue.Livre;
-import com.sun.corba.se.spi.presentation.rmi.StubAdapter;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletContext;
 
 public class BeanPanier implements Serializable{
     
@@ -34,11 +34,18 @@ public class BeanPanier implements Serializable{
     private String adresseIp;
     private HashMap<String, LigneDeCommande> panier;
     private Float prixTtc;
+    private int nbrArticles;
+    private DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
     
     //****************************** Constructeur ******************************
     public BeanPanier() {
+        this.prixDeLiv = 5F;
         this.panier = new HashMap<>();
         this.prixTtc = 0F;
+        this.nbrArticles = 0;
+        this.dateCommande = new Date();
+//        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+//        format.format(dateCommande);
     }
     
     //******************************* Accesseurs *******************************
@@ -129,10 +136,26 @@ public class BeanPanier implements Serializable{
     public void setPrixTtc(Float prixTtc) {
         this.prixTtc = prixTtc;
     }
+
+    public int getNbrArticles() {
+        return nbrArticles;
+    }
+
+    public void setNbrArticles(int nbrArticles) {
+        this.nbrArticles = nbrArticles;
+    }
     
     //***************************** Autres Methodes ****************************
-
+    public void calculNbreArticles(){
+        this.nbrArticles = 0;
+        
+        for(Map.Entry<String, LigneDeCommande> Collection : this.panier.entrySet()){
+            this.nbrArticles += Collection.getValue().getQuantite();
+        }
+    }
+    
     public void prixCommande(){
+        this.prixTtc = 0F;
         
         for(Map.Entry<String, LigneDeCommande> Collection : this.panier.entrySet()){
             this.prixTtc += (Collection.getValue().getQuantite() * 
@@ -227,18 +250,31 @@ public class BeanPanier implements Serializable{
     }
     
     
-    public void saveCommande(Connection connect){
-        
+    public Long saveCommande(Connection connect){
+        Long comGenerateId = null;
         try {
-            String querry = "INSERT INTO (adrIdFacturation, adrIdLivraison, "
-                + "cliNumClient, comDateBC, comObservations, comPrixLivraison, "
-                + "comAdrIp, comDateLiv) "
-                + "VALUES (?,?,?,?,?,?,?,?)";
+            String querry = "INSERT INTO (comDateBC, comObservations, "
+                    + "comPrixLivraison, comAdrIp) "
+                    + "VALUES (?,?,?,?)";
             
-            PreparedStatement pstmt = connect.prepareStatement(querry);
+            PreparedStatement pstmt = connect.prepareStatement(querry, 
+                    Statement.RETURN_GENERATED_KEYS);
             
+            pstmt.setDate(1, java.sql.Date.valueOf(format.format(dateCommande)));
+            pstmt.setString(2, this.observations);
+            pstmt.setFloat(3, this.prixDeLiv);
+            pstmt.setString(4, this.adresseIp);
+            
+            pstmt.execute();
+            ResultSet rs = pstmt.getGeneratedKeys();
+            
+            while(rs != null && rs.first()){
+                comGenerateId = rs.getLong(1);
+            }
         } catch (SQLException ex) {
             Logger.getLogger(BeanPanier.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        return comGenerateId;
     }
 }

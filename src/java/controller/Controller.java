@@ -681,7 +681,11 @@ public class Controller extends HttpServlet {
 //                    url = "jspCommande.jsp";
 //                }
             }
+             if(request.getParameter("acheter") != null){
+                 url = "/WEB-INF/commande/jspPaiement.jsp";
+             }
             
+            request.setAttribute("prixDeLiv", lePanier.getPrixDeLiv());
             request.setAttribute("nbreArticles", lePanier.getNbrArticles());
             request.setAttribute("prixCom", lePanier.getPrixTtc());
             request.setAttribute("list", lePanier.getPanier().values());

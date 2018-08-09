@@ -1,26 +1,23 @@
 .entete  {
-    position:fixed;
     .image {
         float: left;
     }
     titre, sousTitre {
-        display: block;
+    display: block;
         float: right;
-    }
+}
 }
 
-.flex-container {  
-    position:fixed;
-    display : flex;
+.flex-container {
+    display: flex;
 }
 
 .sidebar {
-    position:fixed;
     float: left;
     border : 3px black solid;
     box-decoration-break: clone;
     height:50%;
     width: 15%;
     box-shadow: 3px 3px 0px gray;
-    
 }
+

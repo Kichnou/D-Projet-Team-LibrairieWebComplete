@@ -708,7 +708,6 @@ public class Controller extends HttpServlet {
                 participant = new BeanParticipant();
                 session.setAttribute("participant", participant);
             }
-            
             if (request.getParameter("doit") != null) {
                 participant.setNom(request.getParameter("nom"));
                 participant.setPrenom(request.getParameter("prenom"));
@@ -716,8 +715,7 @@ public class Controller extends HttpServlet {
                 participant.insertParticipant(connect.getInstance());
                 request.setAttribute("participationOK", "Votre participation a été enregistrée.");
             }
-            
-            
+
         }
 
         request.getRequestDispatcher(url).include(request, response);

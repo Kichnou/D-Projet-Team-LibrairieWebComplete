@@ -204,10 +204,6 @@ public class BeanPanier implements Serializable{
             
             panier.put(lig.getLeLivre().getIsbn(), lig);
         }
-        
-        if(lig.getQuantite() < 1){
-            this.del(isbn);
-        }
     }  
     
     public int size(){

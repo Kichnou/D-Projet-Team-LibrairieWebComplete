@@ -24,7 +24,9 @@
             Cryptograme <br/>
             <input type="number" placeholder="Les trois derniers chiffres au dos
                    de la carte" name="crypto"/><br/>
-            <input type="submit" name="Terminer la commande" value="Achat"
+            
+            <input type="hidden" name="section" value="panier"/><br/>
+            <input type="submit" name="validerCommande" value="Achat">
         </form>
     </body>
 </html>

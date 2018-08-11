@@ -629,8 +629,6 @@ public class Controller extends HttpServlet {
         if ("panier".equals(section)) {
             url = "/WEB-INF/commande/jspPanier.jsp";
             
-            
-            
 //            if(request.getParameter("add") != null){
 //                lePanier.add(connect.getInstance(), request.getParameter("add"));
 //            }
@@ -681,9 +679,21 @@ public class Controller extends HttpServlet {
 //                    url = "jspCommande.jsp";
 //                }
             }
-             if(request.getParameter("acheter") != null){
-                 url = "/WEB-INF/commande/jspPaiement.jsp";
-             }
+            
+            if(request.getParameter("acheter") != null){
+                url = "/WEB-INF/commande/jspPaiement.jsp";
+            }
+            
+            if(request.getParameter("validerCommande") != null){
+                System.out.println("je suis dans ze if");
+                
+                int payer = 3;
+                lePanier.getStatutPaiement(connect.getInstance(), payer);
+                lePanier.saveCommande(connect.getInstance());
+                lePanier.saveLigneDeCommande(connect.getInstance());
+                
+                url = "/WEB-INF/Acceuil.jsp";
+            }
             
             request.setAttribute("prixDeLiv", lePanier.getPrixDeLiv());
             request.setAttribute("nbreArticles", lePanier.getNbrArticles());

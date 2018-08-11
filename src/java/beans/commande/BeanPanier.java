@@ -232,8 +232,6 @@ public class BeanPanier implements Serializable{
     
     public ResultSet getLivre(Connection connexion, String isbn){
         
-        
-        
         ResultSet rs = null;
         try {
             String query = "SELECT * FROM creationLivre WHERE livNumIsbn = ?";
@@ -249,32 +247,105 @@ public class BeanPanier implements Serializable{
         return rs;
     }
     
+    public Long getEvaId(Connection connect, String isbn){
+        Long evaId = null;
+        
+        try {
+            String query = "SELECT evaId FROM Evaluation WHERE livNumIsbn = ?";
+            PreparedStatement pstmt = connect.prepareStatement(query);
+            pstmt.setString(1, isbn);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while(rs != null && rs.first()){
+                evaId = rs.getLong("evaId");
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erreur requete getEvaId : "
+                        + ex.getErrorCode() + " / "+ ex.getMessage());
+        }
+        
+        return evaId;
+    }
+    
+    public void saveLigneDeCommande(Connection connexion){
+        String url = "INSERT INTO LigneDeCommande (livNumIsbn, comNumBc"
+                + ", evaId, ligQte, ligPrix, ligTva)"
+                + "VALUES (?,?,?,?,?,?,?)";
+        
+        for(Map.Entry<String, LigneDeCommande> Collection : this.panier.entrySet()){
+            try {
+            PreparedStatement pstmt = connexion.prepareStatement(url);
+            
+            pstmt.setString(1, Collection.getValue().getLeLivre().getIsbn());
+            pstmt.setLong(2, this.numCommande);
+            pstmt.setLong(3, this.getEvaId(connexion
+                    , Collection.getValue().getLeLivre().getIsbn()));
+            pstmt.setInt(4, Collection.getValue().getQuantite());
+            pstmt.setFloat(5, Collection.getValue().getLeLivre().getPrix());
+            pstmt.setFloat(6, Collection.getValue().getLeLivre().getTva());
+            
+            pstmt.execute();
+            
+            pstmt.close();
+            connexion.close();
+            
+            } catch (SQLException ex) {
+                System.out.println("Erreur requete insert ligne de commande : "
+                        + ex.getErrorCode() + " / "+ ex.getMessage());
+            }
+        }
+        
+    }
     
     public Long saveCommande(Connection connect){
-        Long comGenerateId = null;
+        
+        
+        
         try {
-            String querry = "INSERT INTO (comDateBC, comObservations, "
-                    + "comPrixLivraison, comAdrIp) "
-                    + "VALUES (?,?,?,?)";
+            String querry = "INSERT INTO Commande (adrIdFacturation, "
+                    + "adrIdLivraison, cliNumClient, comDateBC, comObservations, "
+                    + "comPrixLivraison, comStatutPay, comAdrIp) "
+                    + "VALUES (?,?,?,?,?,?,?,?)";
             
             PreparedStatement pstmt = connect.prepareStatement(querry, 
                     Statement.RETURN_GENERATED_KEYS);
             
-            pstmt.setDate(1, java.sql.Date.valueOf(format.format(dateCommande)));
-            pstmt.setString(2, this.observations);
-            pstmt.setFloat(3, this.prixDeLiv);
-            pstmt.setString(4, this.adresseIp);
+            pstmt.setLong(1, this.idAdresseFact);
+            pstmt.setLong(2, this.idAdresseLiv);
+            pstmt.setLong(3, this.numClient);
+            pstmt.setDate(4, java.sql.Date.valueOf(format.format(dateCommande)));
+            pstmt.setString(5, this.observations);
+            pstmt.setFloat(6, this.prixDeLiv);
+            pstmt.setString(7, this.statutPayement);
+            pstmt.setString(8, this.adresseIp);
             
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             
             while(rs != null && rs.first()){
-                comGenerateId = rs.getLong(1);
+                this.numCommande = rs.getLong(1);
+            }
+        } catch (SQLException ex) {
+            System.out.println("");
+        }
+        
+        
+        return this.numCommande;
+    }
+    
+    public void getStatutPaiement(Connection connect, int i){
+        
+        try {
+            String query = "SELECT staValeur WHERE staNumerique = ?";
+            PreparedStatement pstmt = connect.prepareStatement(query);
+            pstmt.setInt(1, i);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs != null && rs.first()){
+                this.statutPayement = rs.getString(1);
             }
         } catch (SQLException ex) {
             Logger.getLogger(BeanPanier.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        return comGenerateId;
     }
 }

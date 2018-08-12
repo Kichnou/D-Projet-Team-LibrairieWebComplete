@@ -30,6 +30,8 @@
                         Prix : ${lig.leLivre.prixTtc * lig.quantite} € <br/>
                         <form action="Controller" method="GET">
                             <input type="hidden" name="section" value="panier"/>
+                            <input type="hidden" name="prixCom" value="${prixCom += lig.leLivre.prixTtc * lig.quantite}"<br/>
+                            <input type="hidden" name="isbn" value="${lig.leLivre.isbn}"<br/>
                             <input type="submit" name="add" value="+"/>
                             <input type="submit" name="dec" value="-"/>
                             <input type="submit" name="del" value="X"/>
@@ -43,8 +45,12 @@
             <form action="Controller" method="GET">
                 <input type="hidden" name="section" value="panier"/>
                 <c:if test="${list.size() != 0}">
-                    <input type="submit" name="clean" value="Vider le Panier"/><br/>
-                    PRIX TOTAL : ${prixTtc} €
+                    <input type="submit" name="clean" value="Vider le Panier"/>
+                    <br/>
+                    PRIX TOTAL : ${prixCom} €
+                    <br/>
+                    <input type="submit" name="valider" 
+                           value="Passer La Commande"/>
                 </c:if>
             </form> 
             

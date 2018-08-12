@@ -526,8 +526,6 @@ public class Controller extends HttpServlet {
                 lePanier.add(connect.getInstance(), request.getParameter("livIsbn"));
                 session.setAttribute("beanPanier", lePanier);
             }
-            
-
         }
 
         if ("rechercheAvancee".equals(section)) {
@@ -637,11 +635,75 @@ public class Controller extends HttpServlet {
         if ("panier".equals(section)) {
             url = "/WEB-INF/commande/jspPanier.jsp";
             
+//            if(request.getParameter("add") != null){
+//                lePanier.add(connect.getInstance(), request.getParameter("add"));
+//            }
+//            if(request.getParameter("dec") != null){
+//                lePanier.dec(connect.getInstance(), request.getParameter("dec"));
+//            }
+//            if(request.getParameter("del") != null){
+//                lePanier.del(request.getParameter("del"));
+//            }
+//            if(request.getParameter("clean") != null){
+//                lePanier.clean();
+//            }
+            
+            if(request.getParameter("add") != null){
+                lePanier.add(connect.getInstance(), request.getParameter("isbn"));
+//                lePanier.prixCommande();
+                session.setAttribute("beanPanier", lePanier);
+            }
+            if(request.getParameter("dec") != null){
+                lePanier.dec(connect.getInstance(), request.getParameter("isbn"));
+//                lePanier.prixCommande();
+                session.setAttribute("beanPanier", lePanier);
+            }
+            if(request.getParameter("del") != null){
+                lePanier.del(request.getParameter("isbn"));
+                session.setAttribute("beanPanier", lePanier);
+            }
+            if(request.getParameter("clean") != null){
+                lePanier.clean();
+            }
+            
             if(!lePanier.getPanier().isEmpty()){
                 lePanier.prixCommande();
             }
             
-            request.setAttribute("prixTtc", lePanier.getPrixTtc());
+            if(request.getParameter("valider") != null){
+                url = "/WEB-INF/commande/jspCommande.jsp";
+                
+                lePanier.calculNbreArticles();
+                System.out.println("nbreArticles : "+ lePanier.getNbrArticles());
+                session.setAttribute("beanPanier", lePanier);
+                
+//                cookieClientConnecte = this.getCookie(request.getCookies(),
+//                        "connecte" + numeroClient);
+//                if(cookieClientConnecte == null){
+//                    url = "/WEB-INF/client/clientConnexion.jsp";
+//                }else{
+//                    url = "jspCommande.jsp";
+//                }
+            }
+            
+            if(request.getParameter("acheter") != null){
+                url = "/WEB-INF/commande/jspPaiement.jsp";
+            }
+            
+            if(request.getParameter("validerCommande") != null){
+                System.out.println("je suis dans ze if");
+                
+                int payer = 3;
+                lePanier.getStatutPaiement(connect.getInstance(), payer);
+                lePanier.saveCommande(connect.getInstance());
+                lePanier.saveLigneDeCommande(connect.getInstance());
+                
+                url = "/WEB-INF/Acceuil.jsp";
+            }
+            
+            request.setAttribute("prixDeLiv", lePanier.getPrixDeLiv());
+            request.setAttribute("nbreArticles", lePanier.getNbrArticles());
+            request.setAttribute("prixCom", lePanier.getPrixTtc());
             request.setAttribute("list", lePanier.getPanier().values());
         }
 

@@ -93,5 +93,4 @@ public class Evaluations {
         this.statut = statut;
     }
     
-    
 }

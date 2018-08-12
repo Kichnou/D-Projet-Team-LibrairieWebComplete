@@ -16,13 +16,14 @@
             <c:if test="${e.note == -1}">
                 N/A
             </c:if>
-            
+
             <c:if test="${e.note != -1}">
                 ${e.note}
             </c:if>
-            
+
             ${e.commentaire}
             <br>
         </c:forEach>
+        <jsp:include page="../bottom.jsp" flush="true" />
     </body>
 </html>

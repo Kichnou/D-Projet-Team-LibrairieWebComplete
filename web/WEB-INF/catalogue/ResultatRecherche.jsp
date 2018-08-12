@@ -9,42 +9,60 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <jsp:include page="../Header.jsp" flush="true"/>
-        <jsp:include page="Themes.jsp" flush="true"/>
+        <jsp:include page="../Header.jsp" flush="true"/>          
+        <div class="row">
+            <jsp:include page="Themes.jsp" flush="true"/>
 
-        <h1>Résultat recherche</h1>
+            <div class="col-xs-9">
+                <h1>Résultat recherche</h1>
 
-        <c:forEach var="l" items="${liste}">
-            <a href="Controller?section=detailLivre&livIsbn=${l.isbn}">
-                <c:if test="${l.image != null}">
-                    <img src="${l.image}" height="100" width="70">                
-                </c:if>
+                <c:forEach var="l" items="${liste}">
+                    <div>
+                        <a class="lienLivre" href="Controller?section=detailLivre&livIsbn=${l.isbn}">      
+                            <div class="row">
+                                <c:if test="${l.image != null}">
+                                    <img class="couverture col-xs-3" src="${l.image}" height="100" width="70">                
+                                </c:if>
 
-                ${l.titre}
+                                <div class="col-xs-9 livreInformations">
+                                    ${l.titre}
 
-                <c:if test="${l.sousTitre != null}">
-                    ${l.sousTitre}
-                </c:if>
+                                    <c:if test="${l.sousTitre != null}">
+                                        ${l.sousTitre}
+                                    </c:if>
 
-                <c:forEach var="a" items="${l.auteurs}">
-                    ${a.prenom} ${a.nom}
+                                    <br>
+
+                                    <c:forEach var="a" items="${l.auteurs}">
+                                        ${a.prenom} ${a.nom}
+                                    </c:forEach>
+
+                                    ${l.editeur}
+
+                                    ${l.isbn}
+
+                                    <br>
+
+                                    ${l.prixTtc} €
+
+                                    <a href="Controller?section=commentaires&livreSelectionne=${l.isbn}">Commentaires</a>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="boutonAjouter">
+                            <form action="Controller" method="post">
+                                <input type="hidden" name="section" value="recherche">
+                                <input type="hidden" name="livIsbn" value="${l.isbn}">
+                                <input type="submit" name="doIt" value="Ajouter">
+                            </form>
+                        </div>
+                        <br>
+                    </div>
+
                 </c:forEach>
-
-                ${l.editeur}
-
-                ${l.isbn}
-
-                ${l.prixTtc}
-
-                <a href="Controller?section=commentaires&livreSelectionne=${l.isbn}">Commentaires</a>
-            </a>
-
-            <form action="Controller" method="post">
-                <input type="hidden" name="section" value="recherche">
-                <input type="hidden" name="livIsbn" value="${l.isbn}">
-                <input type="submit" name="doIt" value="Ajouter">
-            </form>
-            <br>
-        </c:forEach>
+            </div>
+        </div>
+        <jsp:include page="../bottom.jsp" flush="true" />
     </body>
 </html>

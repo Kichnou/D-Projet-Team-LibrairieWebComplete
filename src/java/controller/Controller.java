@@ -153,6 +153,12 @@ public class Controller extends HttpServlet {
         
         if (section == null || "accueil".equals(section)) {
             url = "/WEB-INF/Accueil.jsp";
+            
+            if (catalogue.getMonCatalogue().isEmpty()) {
+                catalogue.remplirCatalogue(connect.getInstance());
+            }
+            
+            request.setAttribute("liste", catalogue.getMonCatalogue());
         }
 
         /*

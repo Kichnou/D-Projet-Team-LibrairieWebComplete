@@ -19,7 +19,7 @@ public class BeanCatalogue implements Serializable {
 
     //ATTRIBUTS
     ////////////////////////////////////////////////////////////////
-    private Vector<Livre> monCatalogue = new Vector();
+    private ArrayList<Livre> monCatalogue = new ArrayList();
     private ArrayList<Theme> mesThemes = new ArrayList();
 
     //CONSTRUCTEURS
@@ -29,11 +29,11 @@ public class BeanCatalogue implements Serializable {
 
     //ACCESSEURS
     ////////////////////////////////////////////////////////////////
-    public Vector<Livre> getMonCatalogue() {
+    public ArrayList<Livre> getMonCatalogue() {
         return monCatalogue;
     }
 
-    public void setMonCatalogue(Vector<Livre> monCatalogue) {
+    public void setMonCatalogue(ArrayList<Livre> monCatalogue) {
         this.monCatalogue = monCatalogue;
     }
 

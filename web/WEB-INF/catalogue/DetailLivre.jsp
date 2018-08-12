@@ -37,5 +37,6 @@
 
     <a href="Controller?section=commentaires&livreSelectionne=${livre.isbn}">Commentaires</a>
 
+    <jsp:include page="../bottom.jsp" flush="true" />
 </body>
 </html>

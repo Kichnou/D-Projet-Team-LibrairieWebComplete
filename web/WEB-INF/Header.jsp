@@ -1,22 +1,32 @@
 <%-- ENTETE --%>
 
-<header>
+<header class="container-fluid">
+
     <h2 class="entete">
-        <image src="images/icone header.jpg" class="image">
-        <em class="titre">Dark Side Bookstore</em>
-        <em class="sousTitre">Come to the dark side. We have cookies.</em>
+        <div class="row">
+            <div class="col-xs-3">
+                <image src="images/icone header.jpg" class="image">
+            </div>
+            <div class="col-xs-9 titres">
+                <h1><em class="titre">Dark Side Bookstore</em><br></h1>
+                <em class="sousTitre">Come to the dark side. We have cookies.</em>
+            </div>
+        </div>
     </h2>
+
 </header>
 
 <%-- RECHERCHE --%>
 
 <nav>
 
-    <div class="flex-container">
+    <div class="row">
+
+        Rechercher :
 
         <div>            
             <form action="Controller" method="post" class="menu">
-                Rechercher :
+
                 <input type="hidden" name="section" value="recherche">
                 <input type="text" name="motRecherche">
                 <input type="submit" name="doIt" value="Ok">

@@ -15,14 +15,15 @@
             <input type="text" name="motRecherche">
             <input type="submit" name="doIt" value="Ok"><br>
             Critères de recherche<br>
-            <input type="checkbox" name="critereRecherche1" value="auteur" checked>
+            <input type="checkbox" name="critereRecherche" value="auteur" checked>
             Auteur
-            <input type="checkbox" name="critereRecherche2" value="isbn" checked>
+            <input type="checkbox" name="critereRecherche" value="isbn" checked>
             ISBN
-            <input type="checkbox" name="critereRecherche3" value="titre" checked>
+            <input type="checkbox" name="critereRecherche" value="titre" checked>
             Titre
-            <input type="checkbox" name="critereRecherche4" value="MotCle" checked>
+            <input type="checkbox" name="critereRecherche" value="MotCle" checked>
             Mot clé
         </form>
+        <jsp:include page="../bottom.jsp" flush="true" />
     </body>
 </html>

@@ -10,20 +10,24 @@
     </head>
     <body>
         <jsp:include page="../Header.jsp" flush="true"/>
-        <jsp:include page="Themes.jsp" flush="true"/>
-        <h1>Evaluations</h1>
-        <c:forEach var="e" items="${listeEval}">
-            <c:if test="${e.note == -1}">
-                N/A
-            </c:if>
+        <div class="row">
+            <jsp:include page="Themes.jsp" flush="true"/>
+            <div class="col-xs-9">
+                <h1>Evaluations</h1>
+                <c:forEach var="e" items="${listeEval}">
+                    <c:if test="${e.note == -1}">
+                        N/A
+                    </c:if>
 
-            <c:if test="${e.note != -1}">
-                ${e.note}
-            </c:if>
+                    <c:if test="${e.note != -1}">
+                        ${e.note}
+                    </c:if>
 
-            ${e.commentaire}
-            <br>
-        </c:forEach>
+                    ${e.commentaire}
+                    <br>
+                </c:forEach>
+            </div>
+        </div>
         <jsp:include page="../bottom.jsp" flush="true" />
     </body>
 </html>

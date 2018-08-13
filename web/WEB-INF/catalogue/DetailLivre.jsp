@@ -5,38 +5,63 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" href="./style.css">
-        <title>JSP Page</title>
+        <title>Informations détaillées</title>
     </head>
     <body>
         <jsp:include page="../Header.jsp" flush="true"/>
-        <jsp:include page="Themes.jsp" flush="true"/>
+        <div class="row">
+            <jsp:include page="Themes.jsp" flush="true"/>
 
-        <h1>Détail du livre</h1>
+            <div class="col-xs-9">
+                <h1>Détail du livre</h1>
 
-    <c:if test="${livre.image != null}">
-        <img src="${livre.image}" height="100" width="70">                
-    </c:if>
+                <div class="row">
+                    <div class="col-xs-3">
+                        <c:if test="${livre.image != null}">
+                            <img src="${livre.image}" height="100" width="70">                
+                        </c:if>
+                    </div>
 
-    ${livre.titre}
+                    <div class="col-xs-9">
+                        <div class="row">
+                            titre : <h3 class="titreLivre">${livre.titre}<br></h3>
+                        </div>
 
-    <c:if test="${livre.sousTitre != null}">
-        ${livre.sousTitre}
-    </c:if>
+                        Sous-Titre : 
+                        <c:if test="${livre.sousTitre != null}">
+                            ${livre.sousTitre}
+                        </c:if>
+                        <br>
 
-    <c:forEach var="a" items="${livre.auteurs}">
-        ${a.prenom} ${a.nom}
-    </c:forEach>
+                        Auteur(s) : 
+                        <c:forEach var="a" items="${livre.auteurs}">
+                            ${a.prenom} ${a.nom}
+                        </c:forEach>
+                        <br>
 
-    ${livre.editeur}
+                        Editeur : 
+                        ${livre.editeur}
+                        <br>
 
-    ${livre.isbn}
+                        N° ISBN : 
+                        ${livre.isbn}
+                        <br>
 
-    ${livre.prixTtc}
-    
-    ${livre.resume}
+                        Prix : 
+                        ${livre.prixTtc}€<br>
 
-    <a href="Controller?section=commentaires&livreSelectionne=${livre.isbn}">Commentaires</a>
 
-    <jsp:include page="../bottom.jsp" flush="true" />
-</body>
+                        Résumé : <br>
+                        <div class="resume">
+                            ${livre.resume}<br>
+                        </div>
+
+                        <a href="Controller?section=commentaires&livreSelectionne=${livre.isbn}">Commentaires</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <jsp:include page="../bottom.jsp" flush="true" />
+    </body>
 </html>

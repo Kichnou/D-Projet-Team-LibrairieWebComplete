@@ -158,7 +158,7 @@ public class Controller extends HttpServlet {
                 catalogue.remplirCatalogue(connect.getInstance());
             }
             
-            request.setAttribute("liste", catalogue.getMonCatalogue());
+            session.setAttribute("liste", catalogue.getMonCatalogue());
         }
 
         /*

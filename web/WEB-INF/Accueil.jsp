@@ -15,7 +15,7 @@
             <jsp:include page="catalogue/Themes.jsp" flush="true"/>
 
             <div class="col-xs-9">
-                <h1>Résultat recherche</h1>
+                <h1>Accueil</h1>
 
                 <c:forEach var="l" items="${liste}">
                     <div>

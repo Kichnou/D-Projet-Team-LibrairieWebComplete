@@ -47,5 +47,19 @@
     padding-right: 100px;
 }
 
+.rechercheAvancee {
+    padding-bottom: 200px;
+}
 
+.resume {
+    display: bloc;
+    border: 3px solid black;
+    padding: 5px;
+    max-width: 40%;
+    
+}
+
+.titreLivre {
+    padding-left: 5px;
+}
 

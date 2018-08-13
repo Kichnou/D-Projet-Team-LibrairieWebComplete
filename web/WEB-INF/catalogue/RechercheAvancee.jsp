@@ -7,23 +7,29 @@
         <link rel="stylesheet" href="./style.css">
         <title>Recherche avancée</title>
     </head>
-    <body>
+    <body>        
         <jsp:include page="../Header.jsp" flush="true"/>
-        <jsp:include page="Themes.jsp" flush="true"/>
-        <form action="Controller" method="get">
-            <input type="hidden" name="section" value="resultatRechercheAvancee">
-            <input type="text" name="motRecherche">
-            <input type="submit" name="doIt" value="Ok"><br>
-            Critères de recherche<br>
-            <input type="checkbox" name="critereRecherche" value="auteur" checked>
-            Auteur
-            <input type="checkbox" name="critereRecherche" value="isbn" checked>
-            ISBN
-            <input type="checkbox" name="critereRecherche" value="titre" checked>
-            Titre
-            <input type="checkbox" name="critereRecherche" value="MotCle" checked>
-            Mot clé
-        </form>
-        <jsp:include page="../bottom.jsp" flush="true" />
+        <div class="row">
+            <jsp:include page="Themes.jsp" flush="true"/>
+            <div class="col-xs-9">
+                <div class="rechercheAvancee">
+                    <form action="Controller" method="get">
+                        <input type="hidden" name="section" value="resultatRechercheAvancee">
+                        <input type="text" name="motRecherche">
+                        <input type="submit" name="doIt" value="Ok"><br>
+                        Critères de recherche<br>
+                        <input type="checkbox" name="critereRecherche" value="auteur" checked>
+                        Auteur
+                        <input type="checkbox" name="critereRecherche" value="isbn" checked>
+                        ISBN
+                        <input type="checkbox" name="critereRecherche" value="titre" checked>
+                        Titre
+                        <input type="checkbox" name="critereRecherche" value="MotCle" checked>
+                        Mot clé
+                    </form>
+                </div>
+            </div>
+        </div>
+        <jsp:include page="../bottom.jsp" flush="true" />            
     </body>
 </html>

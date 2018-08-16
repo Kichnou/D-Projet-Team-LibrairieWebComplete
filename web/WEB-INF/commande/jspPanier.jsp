@@ -53,12 +53,6 @@
                            value="Passer La Commande"/>
                 </c:if>
             </form> 
-            
-            
         </div>
-        
-        
-        
-        
     </body>
 </html>

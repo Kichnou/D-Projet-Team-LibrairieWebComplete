@@ -10,9 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,10 +27,10 @@ public class BeanPanier implements Serializable{
     private Long idAdresseFact;
     private Long idAdresseLiv;
     private Long numClient;
-    private Date dateCommande;
+    private Timestamp dateCommande;
     private String observations;
     private Float prixDeLiv;
-    private String statutPayement;
+    private int statutPayement;
     private String adresseIp;
     private HashMap<String, LigneDeCommande> panier;
     private Float prixTtc;
@@ -43,7 +43,12 @@ public class BeanPanier implements Serializable{
         this.panier = new HashMap<>();
         this.prixTtc = 0F;
         this.nbrArticles = 0;
-        this.dateCommande = new Date();
+        //this.dateCommande = new Date();
+        //dateCommande
+        this.idAdresseFact = 1L;
+        this.adresseIp = "92.196.20.45";
+        this.idAdresseLiv = 3L;
+        this.numClient = 1L;
 //        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 //        format.format(dateCommande);
     }
@@ -81,11 +86,11 @@ public class BeanPanier implements Serializable{
         this.numClient = numClient;
     }
 
-    public Date getDateCommande() {
+    public Timestamp getDateCommande() {
         return dateCommande;
     }
 
-    public void setDateCommande(Date dateCommande) {
+    public void setDateCommande(Timestamp dateCommande) {
         this.dateCommande = dateCommande;
     }
 
@@ -105,11 +110,11 @@ public class BeanPanier implements Serializable{
         this.prixDeLiv = prixDeLiv;
     }
 
-    public String getStatutPayement() {
+    public int getStatutPayement() {
         return statutPayement;
     }
 
-    public void setStatutPayement(String statutPayement) {
+    public void setStatutPayement(int statutPayement) {
         this.statutPayement = statutPayement;
     }
 
@@ -252,8 +257,8 @@ public class BeanPanier implements Serializable{
             pstmt.setString(1, isbn);
             ResultSet rs = pstmt.executeQuery();
             
-            while(rs != null && rs.first()){
-                evaId = rs.getLong("evaId");
+            while(rs.next()){
+                evaId = rs.getLong(1);
             }
         } catch (SQLException ex) {
             System.out.println("Erreur requete getEvaId : "
@@ -265,25 +270,25 @@ public class BeanPanier implements Serializable{
     
     public void saveLigneDeCommande(Connection connexion){
         String url = "INSERT INTO LigneDeCommande (livNumIsbn, comNumBc"
-                + ", evaId, ligQte, ligPrix, ligTva)"
-                + "VALUES (?,?,?,?,?,?,?)";
-        
+                + ", ligQteCommande, ligPrix, ligTva)"
+                + "VALUES (?,?,?,?,?)";
+        System.out.println("numCommande : "+ this.numCommande);
         for(Map.Entry<String, LigneDeCommande> Collection : this.panier.entrySet()){
             try {
             PreparedStatement pstmt = connexion.prepareStatement(url);
             
             pstmt.setString(1, Collection.getValue().getLeLivre().getIsbn());
             pstmt.setLong(2, this.numCommande);
-            pstmt.setLong(3, this.getEvaId(connexion
-                    , Collection.getValue().getLeLivre().getIsbn()));
-            pstmt.setInt(4, Collection.getValue().getQuantite());
-            pstmt.setFloat(5, Collection.getValue().getLeLivre().getPrix());
-            pstmt.setFloat(6, Collection.getValue().getLeLivre().getTva());
+//            pstmt.setLong(3, this.getEvaId(connexion
+//                    , Collection.getValue().getLeLivre().getIsbn()));
+            pstmt.setInt(3, Collection.getValue().getQuantite());
+            pstmt.setFloat(4, Collection.getValue().getLeLivre().getPrix());
+            pstmt.setFloat(5, Collection.getValue().getLeLivre().getTva());
             
             pstmt.execute();
             
             pstmt.close();
-            connexion.close();
+            
             
             } catch (SQLException ex) {
                 System.out.println("Erreur requete insert ligne de commande : "
@@ -291,12 +296,16 @@ public class BeanPanier implements Serializable{
             }
         }
         
+        try {
+            connexion.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(BeanPanier.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public Long saveCommande(Connection connect){
-        
-        
-        
+        //this.getStatutPaiement(connect, "Payé");
+        //this.statutPayement = 3;
         try {
             String querry = "INSERT INTO Commande (adrIdFacturation, "
                     + "adrIdLivraison, cliNumClient, comDateBC, comObservations, "
@@ -309,36 +318,47 @@ public class BeanPanier implements Serializable{
             pstmt.setLong(1, this.idAdresseFact);
             pstmt.setLong(2, this.idAdresseLiv);
             pstmt.setLong(3, this.numClient);
-            pstmt.setDate(4, java.sql.Date.valueOf(format.format(dateCommande)));
+            pstmt.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
             pstmt.setString(5, this.observations);
             pstmt.setFloat(6, this.prixDeLiv);
-            pstmt.setString(7, this.statutPayement);
+            pstmt.setInt(7, this.statutPayement);
             pstmt.setString(8, this.adresseIp);
             
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             
-            while(rs != null && rs.first()){
+            while(rs.next()){
                 this.numCommande = rs.getLong(1);
             }
+            
+            pstmt.close();
+            connect.close();
+            
         } catch (SQLException ex) {
-            System.out.println("");
+            System.out.println("erreur saveCommande : "
+                    + ex.getErrorCode() + " / "+ ex.getMessage());
         }
         
-        
         return this.numCommande;
+        
+        
     }
     
-    public void getStatutPaiement(Connection connect, int i){
+    public void getStatutPaiement(Connection connect, String i){
         
         try {
-            String query = "SELECT staValeur WHERE staNumerique = ?";
+            String query = "SELECT staValeur WHERE staValeur = ?";
             PreparedStatement pstmt = connect.prepareStatement(query);
-            pstmt.setInt(1, i);
+            pstmt.setString(1, i);
             ResultSet rs = pstmt.executeQuery();
             
             while (rs != null && rs.first()){
-                this.statutPayement = rs.getString(1);
+                this.statutPayement = rs.getInt(1);
+                //System.out.println("statut paiement : "+this.statutPayement);
+               
+            pstmt.close();
+            connect.close();
+            
             }
         } catch (SQLException ex) {
             Logger.getLogger(BeanPanier.class.getName()).log(Level.SEVERE, null, ex);

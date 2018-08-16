@@ -701,14 +701,13 @@ public class Controller extends HttpServlet {
             }
             
             if(request.getParameter("validerCommande") != null){
-                System.out.println("je suis dans ze if");
                 
-                int payer = 3;
+                String payer = "Payé";
                 lePanier.getStatutPaiement(connect.getInstance(), payer);
                 lePanier.saveCommande(connect.getInstance());
                 lePanier.saveLigneDeCommande(connect.getInstance());
                 
-                url = "/WEB-INF/Acceuil.jsp";
+                url = "/WEB-INF/Accueil.jsp";
             }
             
             request.setAttribute("prixDeLiv", lePanier.getPrixDeLiv());

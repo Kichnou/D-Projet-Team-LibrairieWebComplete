@@ -9,10 +9,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Paement</title>
+        <title>Paiement</title>
     </head>
     <body>
-        <h1>Paement</h1>
+        <h1>Paiement</h1>
         <form action="Controller" method="GET">
             
             Nom du propriétaire de la carte <br/>

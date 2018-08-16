@@ -66,7 +66,7 @@
         <div>
             <form action="Controller" method="post">
                 <input type="hidden" name="section" value="coupDeCoeur">
-                <input type="submit" name="doIt" value="Coup de c&#339;ur">
+                <input type="submit" name="coupDeCoeur" value="Coup de c&#339;ur">
             </form>
         </div>
 
@@ -74,7 +74,7 @@
         <div>
             <form action="Controller" method="post">
                 <input type="hidden" name="section" value="promo">
-                <input type="submit" name="doIt" value="Promotions">
+                <input type="submit" name="promo" value="promo">
             </form>
         </div>
 

@@ -1,5 +1,6 @@
 package controller;
 
+import beanRubrique.BeanRubrique;
 import beans.BeanClient;
 import beans.BeanConnect;
 import beans.BeanInfos;
@@ -7,15 +8,12 @@ import beans.BeanParticipant;
 import beans.catalogue.BeanCatalogue;
 import beans.commande.BeanPanier;
 import classes.catalogue.Evaluations;
-import classes.commande.LigneDeCommande;
 import classes.catalogue.Livre;
 import classes.catalogue.SousTheme;
 import classes.catalogue.Theme;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -149,6 +147,18 @@ public class Controller extends HttpServlet {
         if (leClient == null) {
             leClient = new BeanClient();
             session.setAttribute("client", leClient);
+        }
+        
+        BeanParticipant participant = (BeanParticipant) session.getAttribute("participant");
+        if (participant == null) {
+            participant = new BeanParticipant();
+            session.setAttribute("participant", participant);
+        }
+        
+        BeanRubrique rubrique = (BeanRubrique) application.getAttribute("rubrique");
+        if (rubrique == null){
+            rubrique = new BeanRubrique();
+            application.setAttribute("rubrique", rubrique);
         }
         
         if (section == null || "accueil".equals(section)) {
@@ -709,11 +719,7 @@ public class Controller extends HttpServlet {
 
         if ("participant".equals(request.getParameter("section"))) {
             url = "/WEB-INF/rubrique/participant.jsp";
-            BeanParticipant participant = (BeanParticipant) session.getAttribute("participant");
-            if (participant == null) {
-                participant = new BeanParticipant();
-                session.setAttribute("participant", participant);
-            }
+            
             if (request.getParameter("doit") != null) {
                 participant.setNom(request.getParameter("nom"));
                 participant.setPrenom(request.getParameter("prenom"));
@@ -723,6 +729,47 @@ public class Controller extends HttpServlet {
             }
 
         }
+        
+        if ("evenement".equals(request.getParameter("section"))) {
+           url = "/WEB-INF/rubrique/evenement.jsp";
+           if(request.getParameter("evenement") != null){
+               
+            
+        }
+        }
+        
+        if ("coupDeCoeur".equals(section)) {
+            System.out.println("Dans Coup de coeur");
+            
+            url = "/WEB-INF/rubrique/coupDeCoeur.jsp";
+           
+           if (request.getParameter("coupDeCoeur") != null){
+               
+               rubrique.getPromoCoupsDeCoeur(connect.getInstance(), 
+                       request.getParameter("coupDeCoeur"));
+               request.setAttribute("mesCoupsDeCoeur", rubrique.getMesCoupDeCoeurs());
+           }
+        }
+        
+        if("promo".equals(request.getParameter("section"))){
+            url = "/WEB-INF/rubrique/promo.jsp";
+            
+            if(request.getParameter("promo")!= null){
+                
+                rubrique.getPromoCoupsDeCoeur(connect.getInstance(), 
+                        request.getParameter("promo"));
+                
+                request.setAttribute("mesPromos", rubrique.getMesPromo());
+             //   System.out.println("Size"+rubrique.getMesPromo().size());
+            }
+        }    
+        try {
+            connect.getInstance().close();
+        } catch (SQLException ex) {
+            System.out.println("Connection problem to close"+ex.getMessage()
+                    +ex.getErrorCode());
+        }
+        
 
         request.getRequestDispatcher(url).include(request, response);
     }

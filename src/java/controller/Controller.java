@@ -738,7 +738,6 @@ public class Controller extends HttpServlet {
         }
         
         if ("coupDeCoeur".equals(section)) {
-            System.out.println("Dans Coup de coeur");
             
             url = "/WEB-INF/rubrique/coupDeCoeur.jsp";
            

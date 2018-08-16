@@ -5,18 +5,12 @@
  */
 package classes.commande;
 
-import classes.catalogue.*;
 import classes.catalogue.Evaluations;
 import classes.catalogue.Livre;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
-public class LigneDeCommande{
+public class LigneDeCommande implements Serializable{
     
     //******************************** Attributs *******************************
     private Evaluations eval;

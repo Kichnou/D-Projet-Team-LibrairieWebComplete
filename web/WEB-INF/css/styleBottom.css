@@ -110,3 +110,14 @@ th
     text-decoration: underline; /* Titre souligné */
     padding-left: 8px;
 }
+
+.footerContainer {
+    position: relative;
+    width: 100%;
+}
+
+.basDePage {
+    position: inherit;
+    bottom: 0px;
+    width: 100%;
+}

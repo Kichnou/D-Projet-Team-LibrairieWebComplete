@@ -314,16 +314,8 @@ public class BeanClient implements Serializable {
         }
     }
     
-
-    
-    
-    
-    
-    
     public void modifierMotDePasseClient(Connection connexion,
             String nouveauMotDePasse) throws Exception {
-        
-        
         
         try {
             String requeteModificationMotDePasseClient = "UPDATE Client SET "

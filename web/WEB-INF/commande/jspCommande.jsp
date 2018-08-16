@@ -1,0 +1,41 @@
+<%-- 
+    Document   : jspCommande
+    Created on : 7 août 2018, 16:25:56
+    Author     : danie
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./style.css">
+        <title>Validation Commande</title>
+    </head>
+    <body>
+        <jsp:include page="../Header.jsp" flush="true" />
+        <div class="row">
+            <jsp:include page="../catalogue/Themes.jsp" flush="true" />
+            <div class="col-xs-9">
+                <h1>Passer la commande (Nombre d'articles : ${nbreArticles}) </h1>
+                <div>
+                    <div>
+                        <p>Récapitulatif de la commande: </p> <br/>
+                        Articles : Eur ${prixCom} <br/>
+                        Livraison : Eur ${prixDeLiv}
+                    </div>
+                    <div>
+                        Prix Total : Eur ${prixCom + prixDeLiv} <br/>
+                        Le total de la commande inclut la TVA.
+                        <form action="Controller" method="GET">
+                            <input type="hidden" name="section" value="panier"/><br/>
+                            <input type="submit" name="acheter" value="Acheter"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

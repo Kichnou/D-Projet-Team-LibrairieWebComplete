@@ -5,17 +5,12 @@
  */
 package classes.commande;
 
-import classes.catalogue.*;
 import classes.catalogue.Evaluations;
 import classes.catalogue.Livre;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class LigneDeCommande{
+public class LigneDeCommande implements Serializable{
     
     //******************************** Attributs *******************************
     private Evaluations eval;
@@ -70,6 +65,14 @@ public class LigneDeCommande{
     public void setLeLivre(Livre leLivre) {
         this.leLivre = leLivre;
     }
+
+    public Evaluations getEval() {
+        return eval;
+    }
+
+    public void setEval(Evaluations eval) {
+        this.eval = eval;
+    }
     
     //***************************** Autres Methodes ****************************
     
@@ -90,33 +93,6 @@ public class LigneDeCommande{
 //    }
 //    
 
-    public void saveLigneDeCommande(Long numCommande, Connection connexion){
-        String url = "INSERT INTO LigneDeCommande (ligId, livNumIsbn, comNumBc"
-                + ", evaId, ligQte, ligPrix, ligTva)"
-                + "VALUES (?,?,?,?,?,?,?)";
-        
-        try {
-            PreparedStatement pstmt = connexion.prepareStatement(url);
-            
-            pstmt.setLong(1, this.numLignDeCommande);
-            pstmt.setString(2, this.leLivre.getIsbn());
-            pstmt.setLong(3, numCommande);
-            pstmt.setLong(4, this.eval.getEvaId());
-            pstmt.setInt(5, this.quantite);
-            pstmt.setFloat(6, this.leLivre.getPrix());
-            pstmt.setFloat(7, this.leLivre.getTva());
-            
-            pstmt.execute();
-            
-            pstmt.close();
-            connexion.close();
-            
-        } catch (SQLException ex) {
-            System.out.println("Erreur requete insert ligne de commande : "
-                    + ex.getErrorCode() + " / "+ ex.getMessage());
-        }
-    }
-    
     public Float prixTtcLigCom(){
         Float prixTtc = 0.0F;
         
@@ -124,9 +100,6 @@ public class LigneDeCommande{
         
         return prixTtc;
     }
-    
-    
-    
     
     public void change(int quantite){
         this.quantite += quantite;

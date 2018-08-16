@@ -2,14 +2,21 @@
     .image {
         float: left;
     }
-    titre, sousTitre {
-        display: block;
-        float: right;
-    }
+    
 }
 
-.flex-container {    
-    display : flex;
+.titres {
+        padding-top: 50px;
+        padding-left: 150px;
+    }
+
+.row {
+    padding-left:20px
+}
+
+.sidebar-container {
+    width: 20%;
+    position: relative;
 }
 
 .sidebar {
@@ -19,5 +26,40 @@
     height:50%;
     width: 15%;
     box-shadow: 3px 3px 0px gray;
+    position: fixed;
+}
+
+.couverture {
+    height: 100px;
+    width: 70px;
+}
+
+.lienLivre {
+    display: block;
+}
+
+.livreInformations {
+    padding-top: 10px;
+}
+
+.boutonAjouter {
+    text-align: right;
+    padding-right: 100px;
+}
+
+.rechercheAvancee {
+    padding-bottom: 200px;
+}
+
+.resume {
+    display: bloc;
+    border: 3px solid black;
+    padding: 5px;
+    max-width: 40%;
     
 }
+
+.titreLivre {
+    padding-left: 5px;
+}
+

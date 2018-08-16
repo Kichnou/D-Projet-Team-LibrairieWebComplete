@@ -187,8 +187,6 @@ public class BeanClient implements Serializable {
             //champs obligatoires :
             String requeteInsertion = "INSERT INTO Client (cliCivilite, " +
                     "cliNom, cliPrenom, cliEmail, cliStatut, cliMdp, cliMdpCompl";
-            //TODEL String parenthèseQuery = ")";
-            //TODEL String nullItemQuery = "";
 
             //Si une valeur a été saisie par l'utilisateur pour un champ non
             //obligatoire, alors ajouter le nom du champs à la liste des champs :
@@ -259,7 +257,12 @@ public class BeanClient implements Serializable {
             i++;
             prepstmt.setShort(i, (short) 1); //todo hmap(Actif) TODOPB : valeur en dur => est-ce licite ?
             
-            //"Hacher" le mot de passe saisi en assaisonnant avec une pointe de sel :
+            /*
+             * Créer un mot de passe par l'intermédiaire du constructeur idoine
+             * dans le cas d'un nouveau mot de passe, ce qui permet par la même
+             * occasion de "Hacher" automatiquement le mot de passe saisi tout
+             * en l'assaisonnant au passage avec une pointe de sel :
+             */
             MotDePasseSQL monMDPSQL = new MotDePasseSQL(connexion,
                     motDePasseSaisi);
             
@@ -296,14 +299,11 @@ public class BeanClient implements Serializable {
             //Exécuter la requête d'insertion :
             prepstmt.execute();
             
-
+            //Fermeture de l'instruction :
+            prepstmt.close();
             
-            try {
-                prepstmt.close();
-            } catch(Exception ex) {
-                throw new Exception("Fermeture de l'instruction lors de " +
-                        "l'insertion du nouveau client :<br />" + ex.getMessage());
-            }
+            //Fermeture de la connexion :
+            connexion.close();
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de l'insertion du nouveau " +
                     "client :<br />" + sqlEx.getErrorCode() + " " +
@@ -311,15 +311,6 @@ public class BeanClient implements Serializable {
         } catch (Exception ex) {
             throw new Exception("Exception lors de l'insertion du nouveau " +
                     "client :<br />" + ex.getMessage());
-        }
-
-        try {
-            connexion.close();
-        } catch (SQLException sqlEx) {
-            throw new Exception("Erreur SQL lors de la fermeture de la " +
-                    "connexion servant lors de l'insertion du nouveau " +
-                    "client :<br />" + sqlEx.getErrorCode() + " " +
-                    sqlEx.getMessage());
         }
     }
     
@@ -341,28 +332,31 @@ public class BeanClient implements Serializable {
             System.out.println("dbg requête màj mdp client :\n" +
                     requeteModificationMotDePasseClient);
         
-            //Créer un objet de la classe MotDePasseSQL :
-            MotDePasseSQL monMDP = new MotDePasseSQL(connexion,
+            /*
+             * Créer un mot de passe par l'intermédiaire du constructeur idoine
+             * dans le cas d'un nouveau mot de passe, ce qui permet par la même
+             * occasion de "Hacher" automatiquement le mot de passe saisi tout
+             * en l'assaisonnant au passage avec une pointe de sel :
+             */
+            MotDePasseSQL monMDPSQL = new MotDePasseSQL(connexion,
                     nouveauMotDePasse);
             
             
             PreparedStatement prepstmt = connexion.
                     prepareStatement(requeteModificationMotDePasseClient);
             
-            prepstmt.setString(1, monMDP.getMdpApresHachage());
-            prepstmt.setString(2, monMDP.getMotDePasseCompl());
+            prepstmt.setString(1, monMDPSQL.getMdpApresHachage());
+            prepstmt.setString(2, monMDPSQL.getMotDePasseCompl());
             prepstmt.setLong(3, cliNumClient);
             
+            //Exécuter la requête de mise à jour :
             prepstmt.executeUpdate();
             
-            try {
-                prepstmt.close();
-            } catch(Exception ex) {
-                throw new Exception("Fermeture de l'instruction lors de la " +
-                        "modification du mot de passe du client :<br />" +
-                        ex.getMessage());
-            }
+            //Fermeture de l'instruction :
+            prepstmt.close();
             
+            //Fermeture de la connexion :
+            connexion.close();
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la modification du mot " +
                     "de passe du client :<br />" + sqlEx.getErrorCode() + " " +
@@ -372,14 +366,6 @@ public class BeanClient implements Serializable {
                     "de passe du client :<br />" + ex.getMessage());
         }
 
-        try {
-            connexion.close();
-        } catch (SQLException sqlEx) {
-            throw new Exception("Erreur SQL lors de la fermeture de la " +
-                    "connexion servant lors de la modification du mot de " +
-                    "passe du client :<br />" + sqlEx.getErrorCode() + " " +
-                    sqlEx.getMessage());
-        }
     }
 
     
@@ -387,6 +373,9 @@ public class BeanClient implements Serializable {
     public boolean getClientFromEMailClient(Connection connexion, String eMailSaisi) throws Exception {
 
         boolean loginIncorrect = false;        
+        
+        System.out.println("dbg fonction getClientFromEMailClient : IN : e-mail saisi = <<"+eMailSaisi+">>");            
+        
         
         //Déterminer si le login (e-mail) du client est correct ou non :        
         try {
@@ -451,27 +440,20 @@ public class BeanClient implements Serializable {
 
                 cliMdpCompl = rsClient.getString("cliMdpCompl");
                 System.out.println("dbg gNCFEMC cliMdpCompl VAUT <<" + cliMdpCompl + ">>."); 
-
-                
             }
             
             if (loginIncorrect)
                 throw new Exception("L'e-mail est incorrect !");
             
-            try {
-                rsClient.close();
-            } catch(Exception ex) {
-                throw new Exception("Fermeture du résultat lors de la " +
-                        "détermination du numéro du client :<br />" + ex.getMessage());
-            }
+            //Fermeture du résultat :
+            rsClient.close();
             
-            try {
-                prepstmt.close();
-            } catch(Exception ex) {
-                throw new Exception("Fermeture de l'instruction lors " +
-                        "de la détermination du numéro du client :<br />" +
-                        ex.getMessage());
-            }
+            //Fermeture de l'instruction :
+            prepstmt.close();
+            
+            //Fermeture de la connexion :
+            connexion.close();
+            
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la détermination du " +
                     "numéro du client :<br />" + sqlEx.getErrorCode() + " " +
@@ -481,14 +463,7 @@ public class BeanClient implements Serializable {
                     "numéro du client :<br />" + ex.getMessage());
         }
 
-        try {
-            connexion.close();
-        } catch (SQLException sqlEx) {
-            throw new Exception("Erreur SQL lors de la fermeture de la " +
-                    "connexion servant à déterminer le numéro du client :<br />" +
-                    sqlEx.getErrorCode() + " " + sqlEx.getMessage());
-        }
-        
+        //Retourner le résultat :
         return (! loginIncorrect);
     }
     
@@ -533,10 +508,6 @@ public class BeanClient implements Serializable {
                 //Le login a bien été trouvé.
                 System.out.println("dbg mdpEstCorrect login <<" + eMailSaisi + ">> TROUVÉ !!!!!!");                
                 
-//TODEL                //Créer un objet de la classe Employe à partir du login saisi :
-//TODEL                Employe unEmploye = new Employe(                          //FLC
-//TODEL                        //FLC
-//TODEL                        maFenetrePrincipale.getMaConnexionJdbc(), eMailSaisi);
                 //Récupération du mot de passe du client :
                 motDePasseLu = cliMdp;
                 //C'est le "grain de sel"
@@ -544,18 +515,22 @@ public class BeanClient implements Serializable {
                 System.out.println("dbg mdpEstCorrect motDePasseLu affecté : <<" + motDePasseLu + ">>.");
                 System.out.println("dbg mdpEstCorrect motDePasseCompl affecté : <<" + motDePasseCompl + ">>.");
 
-///////////////////todel@end                try {
-                //Créer un objet de la classe MotDePasseSQL :
-                MotDePasseSQL monMDP = new MotDePasseSQL(connexion,
-                        motDePasseSaisi,motDePasseLu,motDePasseCompl);
-                motDePasseValide = monMDP.motDePasseEstValide();
-                    
-/*todel@end                    
+                try {
+                    /*
+                     * Créer un mot de passe par l'intermédiaire du constructeur
+                     * idoine dans le cas où le mot de passe et le "grain de sel"
+                     * sont connus et que l'on souhaite contrôler la validité d'un
+                     * mot de passe saisi :
+                     */
+                    MotDePasseSQL monMDPSQL = new MotDePasseSQL(connexion,
+                            motDePasseSaisi,motDePasseLu,motDePasseCompl);
+                    motDePasseValide = monMDPSQL.motDePasseEstValide();
                 } catch (Exception ex) {
-                    TODODEV : remplacer par un message d'erreur … ???!!!!
-                    Logger.getLogger(JFrameLoginEmploye.class.getName()).log(Level.SEVERE, null, ex);
+                    throw new Exception("Contrôle de la validité du mot de " +
+                            "passe :<br />" + ex.getMessage());
+                    //TODOANA : exceptions en modèle MVC : Logger.getLogger(JFrameLoginEmploye.class.getName()).log(Level.SEVERE, null, ex);
                 }
-*/                
+                
                 if ( ! motDePasseValide) {
                     //Si le mot de passe qui a été saisi est INVALIDE ! :
                     System.out.println("dbg mdpEstCorrect motDePasseValide = false.");
@@ -604,19 +579,15 @@ public class BeanClient implements Serializable {
             if (loginOuMDPIncorrect)
                 throw new Exception("L'e-mail ou le mot de passe est incorrect !");
             
-            try {
-                rsNombreDeLogin.close();
-            } catch(Exception ex) {
-                throw new Exception("Fermeture du résultat lors du contrôle " +
-                        "du mot de passe :<br />" + ex.getMessage());
-            }
+            //Fermeture du résultat :
+            rsNombreDeLogin.close();
+
+            //Fermeture de l'instruction :
+            prepstmt.close();
             
-            try {
-                prepstmt.close();
-            } catch(Exception ex) {
-                throw new Exception("Fermeture de l'instruction lors " +
-                        "du contrôle du mot de passe :<br />" + ex.getMessage());
-            }
+            //Fermeture de la connexion :
+            connexion.close();
+
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors du contrôle du mot de " +
                     "passe :<br />" + sqlEx.getErrorCode() + " " +
@@ -626,18 +597,58 @@ public class BeanClient implements Serializable {
                     "passe :<br />" + ex.getMessage());
         }
 
-        try {
-            connexion.close();
-        } catch (SQLException sqlEx) {
-            throw new Exception("Erreur SQL lors de la fermeture de la " +
-                    "connexion servant à déterminer si le mot de passe est " +
-                    "correct :<br />" + sqlEx.getErrorCode() + " " +
-                    sqlEx.getMessage());
-        }
-        
+        //Retourner le résultat :
         return motDePasseValide;
     }
             
+    public void modifierClient(Connection connexion, Long numClient,
+            String nomClient, String prenomClient, 
+            String dateNaissClient, 
+            String eMailClient, String telDomicileClient, 
+            String telMobileClient) throws Exception {
+        
+        try {
+            String requeteModificationClient = "UPDATE Client SET "
+                + "cliNom = ?, "
+                + "cliPrenom = ?, "
+                + "cliDateNaiss = ?, "
+                + "cliEmail = ?, "
+                + "cliTelDomicile = ?, "
+                + "cliTelMobile = ? "
+                + "WHERE cliNumClient = ?";
+        
+            System.out.println("dbg requête modif client = " +
+                    requeteModificationClient);
+        
+            PreparedStatement prepstmt = connexion.
+                    prepareStatement(requeteModificationClient);
+            
+            prepstmt.setString(1, nomClient.toUpperCase());
+            prepstmt.setString(2, prenomClient);
+            prepstmt.setDate(3, java.sql.Date.valueOf(dateNaissClient));
+            prepstmt.setString(4, eMailClient);
+            prepstmt.setString(5, telDomicileClient);
+            prepstmt.setString(6, telMobileClient);
+            prepstmt.setLong(7, numClient);
+
+            //Exécuter la requête de mise à jour :
+            prepstmt.executeUpdate();
+            
+            //Fermeture de l'instruction :
+            prepstmt.close();
+            
+            //Fermeture de la connexion :
+            connexion.close();
+            
+        } catch (SQLException sqlEx) {
+            throw new Exception("Erreur SQL lors de la modification des " +
+                    "informations du client :<br />" + sqlEx.getErrorCode() +
+                    " " + sqlEx.getMessage());
+        } catch (Exception ex) {
+            throw new Exception("Erreur lors de la modification des " +
+                    "informations du client :<br />" + ex.getMessage());
+        }
+    }
             
 //TODEL : réserve :    
 /* TODEL TODEL TODEL TODEL : a priori non utilisé : recherche d'un client    
@@ -695,65 +706,6 @@ public class BeanClient implements Serializable {
     }
 */
     
-/* TODO : peut peut-être servir pour faire une requête UPDATE si une valeur d'un client est modifiée lors d'une consultation    
-    public void modifierClient(JTextField numClient, JComboBox leComboBox,  
-            JFormattedTextField nomClient, JFormattedTextField prenomClient, 
-            JFormattedTextField dateNaissClient, 
-            JFormattedTextField eMailClient, JFormattedTextField telDomicileClient, 
-            JFormattedTextField telMobileClient, 
-            JFormattedTextField StatutClient, 
-            Statut leStatut){
-        
-        Connection connexion = connecterJdbc();
-        
-        
-        try {
-            String requeteModificationMotDePasseClient = "UPDATE Client SET "
-                + "cliCivilite = ?, "
-                + "cliNom = ?, "
-                + "cliPrenom = ?, "
-                + "cliDateNaiss = ?, "
-                + "cliEmail = ?, "
-                + "cliTelDomicile = ?, "
-                + "cliTelMobile = ?, "
-                + "cliStatut = ?, "
-                TODO : cliMdp + cliMdpCompl
-                + "WHERE cliNumClient = ?";
-        
-            System.out.println("dbg requête modif Mdp = " +
-                    requeteModificationMotDePasseClient);
-        
-            PreparedStatement prepstmt = connexion.
-                    prepareStatement(requeteModificationMotDePasseClient);
-            
-            prepstmt.setString(1, String.valueOf(leComboBox.getSelectedItem()));
-            prepstmt.setString(2, nomClient.getText().toUpperCase());
-            prepstmt.setString(3, prenomClient.getText());
-            prepstmt.setDate(4, java.sql.Date.valueOf(dateNaissClient.getText()));
-            prepstmt.setString(5, eMailClient.getText());
-            prepstmt.setString(6, telDomicileClient.getText());
-            prepstmt.setString(7, telMobileClient.getText());
-            prepstmt.setShort(8, (short) leStatut.gestionStatut(StatutClient.getText()));
-TODO : oups num séquence            prepstmt.setString(9, comInterne.getText());
-            prepstmt.setLong(10, Long.valueOf(numClient.getText()));
-                TODO : cliMdp + cliMdpCompl
-            
-            prepstmt.executeUpdate();
-            
-            prepstmt.close();
-            
-        } catch (SQLException sqlEx) {
-    todo throw !!!!! 
-            System.out.println("Erreur requête modification mot de passe : "
-                    + ""+ sqlEx.getErrorCode() + " " + sqlEx.getMessage());
-        }
-        try {
-            connexion.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(BeanCatalogue.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-*/
 
             
     

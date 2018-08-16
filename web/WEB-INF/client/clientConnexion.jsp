@@ -9,6 +9,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style type="text/css">
+        <jsp:include page="../css/styleClient.css"/>
+        </style>
         <title>Connexion au compte client</title>
     </head>
     <body>
@@ -17,13 +20,14 @@
         <h3>Connexion au compte client :</h3>
         <form action='Controller' method='post'>
             <input type="hidden" name="section" value="clientConnexion" />
-            <font color='red'>Les champs indiqués par une (*) doivent être remplis.</font><br>
+            <p class="obligatoire">Les champs indiqués par une étoile (*) doivent être remplis.</p>
             (*) E-mail : <input type='email' name='email' value='${cliEmail}' required /><br>
-            (*) Mot de passe : <input type='password' name='password' required /><br>
+            (*) Mot de passe : <input type='password' name='motdepasse' required /><br>
             <input type='submit' name='connecterClient' value='Connexion' />
         </form>
-        <font color='red'>${messageErreurConnexionClient}</font>
+        <p class="erreur">${messageErreurConnexionClient}</p>
         <hr>
+        <p class="information">${messageCompteClientCreeAvecSucces}</p>
         <h3>Nouveau client :</h3>
         <form action='Controller' method='post'>
             <input type="hidden" name="section" value="clientCreerCompte" />

@@ -64,8 +64,10 @@ public class MotDePasseSQL {
     public MotDePasseSQL() {
     }
 
-    //Contructeur à utiliser pour un changement de mot de passe (ou pour un
-    //nouveau mot de passe) :
+    /*
+     * Contructeur à utiliser pour un changement de mot de passe (ou pour un
+     * nouveau mot de passe) :
+     */
     public MotDePasseSQL(Connection connexion, String motDePasseSaisi)
             throws Exception {
         this.connexion = connexion;
@@ -87,7 +89,7 @@ public class MotDePasseSQL {
     
     /*
      * Contructeur à utiliser lorsque le mot de passe et le "grain de sel" sont
-     * connus et que l'on veut contrôler la validité d'un mot de passe saisi.
+     * connus et que l'on veut contrôler la validité d'un mot de passe saisi :
      */
     public MotDePasseSQL(Connection connexion, String motDePasseSaisi,
             String motDePasseLu, String motDePasseCompl) throws Exception {
@@ -163,6 +165,7 @@ public class MotDePasseSQL {
         System.out.println("dbg motDePasseLu = <<" + motDePasseLu + ">>.");
         System.out.println("dbg Sont-ils égaux ?");
         System.out.println("dbg MdpSQL.motDePasseEstValide() OUT :");
+        //Retourner le résultat :
         return (mdpApresHachage.equals(motDePasseLu));
     }
 
@@ -178,6 +181,7 @@ public class MotDePasseSQL {
         //TODOBONUSTRACK : au moins un chiffre : boucle sur l'array sans le convertir en String ? / ou bien matches [0-9]+ ou qqch comme ça. / ou bien tri et recherche binaire ?
         //TODOBONUSTRACK : au moins un signe de ponctuation : boucle sur l'array sans le convertir en String ? / ou bien matches PBTODO … / ou bien tri et recherche binaire ?
         //TODOBONUSTRACK : bien tester depuis la console, etc …
+        //Retourner le résultat :
         return (force >= 1); //TODOBONUSTRACK 4
     }
     
@@ -189,48 +193,18 @@ public class MotDePasseSQL {
      * - au moment de son appel dans le constructeur du mot de passe il y avait
      *   un avertissement "Overridable method call in constructor" (ce qui
      *   poserait problème si MotDePasseSQL avait une classe fille) ;
-     * - pouvoir appeler cette méthode depuis la classe Employe sans devoir
+     * - pouvoir appeler cette méthode depuis la classe BeanClient sans devoir
      *   instancier un MotDePasseSQL juste pour ça.
      */
     public static String genererUnUUID() {
         System.out.println("dbg static MdpSQL.genererUnUUID() : un UUID va " +
                 "être généré.");
+        //Retourner le résultat :
         return UUID.randomUUID().toString().replace("-","").toUpperCase();
     }    
 
     /*========================= Méthode(s) privée(s) =========================*/
 
-/*todel @ end si finalement plus utilisée    
-    / *
-    Fonction utilitaire privée pour convertir un char[] en byte[] en utilisant
-    le CharSet par défaut.
-    * /
-    private byte[] conversionCharArrayEnByteArray(char[] caracteres) {
-        return conversionCharArrayEnByteArray(caracteres, Charset.defaultCharset());
-    }
-
-    / *
-    Fonction utilitaire privée pour convertir un char[] en byte[] en utilisant
-    un CharSet passé en paramètre.
-    * /
-    private byte[] conversionCharArrayEnByteArray(char[] caracteres, Charset charset) {
-        //"Mapping" d'un CharBuffer sur le tableau char[] :
-        CharBuffer tamponCaracteres = CharBuffer.wrap(caracteres);
-        //Encodage du CharBuffer via le charset :
-        ByteBuffer tamponOctets = charset.encode(tamponCaracteres);
-        //Récupération du byte[] associé au ByteBuffer :
-        byte[] tableauOctets = tamponOctets.array();
-        //Copie de la zone qui nous intéresse
-        // (ATTENTION : le buffer peut être plus grand !) :
-        byte[] resultatOctets = Arrays.copyOf(tableauOctets,tamponOctets.limit());
-        //Effacement du buffer du ByteBuffer :
-        Arrays.fill(tableauOctets,(byte)0);
-        //Retour du résultat :
-        return resultatOctets;
-    }    
-todel.end
-*/
-    
     /* 
      * Fonction de "hachage" d'un mot par un algorithme passé en paramètre.
      * Valeurs possibles pour l'algorithme dans Microsoft SQL Server 2008 et
@@ -238,9 +212,9 @@ todel.end
      *     MD2           Non recommandé, car le mot de passe peut être "cassé".
      *     MD4           Non recommandé, car le mot de passe peut être "cassé".
      *     MD5           Non recommandé, car le mot de passe peut être "cassé".
-                         C'est un algorithme sensible à la "collision".
+     *                   C'est un algorithme sensible à la "collision".
      *     SHA           Non recommandé, car le mot de passe peut être "cassé".
-                         C'est un algorithme sensible à la "collision".
+     *                   C'est un algorithme sensible à la "collision".
      *     SHA1          Non recommandé, car le mot de passe peut être "cassé".
      *     SHA2_256      Algorithme de la famille SHA-2.
      *     SHA2_512      Algorithme de la famille SHA-2.
@@ -255,8 +229,8 @@ todel.end
      * (32 octets) pour SHA2_256 et 512 bits (64 octets) pour SHA2_512.
      * Créateur : Florent.
      */
-    //todo => choisir un algo, supprimer 'algo'
-    private String hacherUneChaineSQL(String motDePasseSaisi, String grainDeSel, String algo) throws Exception {
+    private String hacherUneChaineSQL(String motDePasseSaisi, String grainDeSel,
+            String algo) throws Exception {
         
         /*
          * Le futur résultat sous forme de chaîne hexadécimale, initialisé avec
@@ -279,7 +253,6 @@ todel.end
             //todoPB : motDePasseSaisi en Web : String en clair ????!!!!
             //todoPB : et, du coup, il transiterait en clair sur le WWW !!!!!???
             prepstmt.setString(2, motDePasseSaisi + grainDeSel);
-
             
             System.out.println("dbg hacherUneChaineSQL algo <<" +
                     algo + ">>.");
@@ -296,33 +269,22 @@ todel.end
             System.out.println("dbg hacherUneChaineSQL résultat du hachage <<" +
                     resultatChaineHexadecimale + ">>.");
             
-            try {
-                rsHachage.close();
-            } catch(Exception ex) {
-                throw new Exception("Fermeture du résultat lors du " +
-                        "traitement du mot de passe :<br />" + ex.getMessage());
-            }
+            //Fermeture du résultat :
+            rsHachage.close();
             
-            try {
-                prepstmt.close();
-            } catch(Exception ex) {
-                throw new Exception("Fermeture de l'instruction lors du " +
-                        "traitement du mot de passe :<br />" + ex.getMessage());
-            }
+            //Fermeture de l'instruction :
+            prepstmt.close();
+            
+            //Fermeture de la connexion :
+            connexion.close();
+            
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors du traitement du mot de " +
                     "passe :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         }
-
-        try {
-            connexion.close();
-        } catch (SQLException sqlEx) {
-            throw new Exception("Erreur SQL lors de la fermeture de la " +
-                    "connexion servant à traiter le mot de passe :<br />" +
-                    sqlEx.getErrorCode() + " " + sqlEx.getMessage());
-        }
         
+        //Retourner le résultat :
         return resultatChaineHexadecimale;
 
     }

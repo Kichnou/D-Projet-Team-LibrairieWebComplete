@@ -42,7 +42,7 @@
     </table>
             
     <hr class="ligneorange">
-    <h4 id ="teamtitre">Site conçu et développé par la team :</h4>
+    <h5 id ="teamtitre">Site conçu et développé par la team :</h5>
     <p id="team">Alexandre, Edem, Florent, Kevin.</p>
     <p id="teammini">La team &#8660; AlexH4k3R &#8746; Dsnow &#8721; Kinou &#8747; SystemFlo</p>
 </footer>

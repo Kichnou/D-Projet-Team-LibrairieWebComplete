@@ -26,8 +26,6 @@ public class BeanInfos implements Serializable {
     //Constructeur par défaut :
     public BeanInfos() {
         this.map = new HashMap();
-        //TODO : ici ????? lire toutes les informations dans la table Infos et les
-        //inscrire dans "map" via appel(s) à la méthode add
     }
 
     public void add(String clef, String valeur) {
@@ -60,6 +58,7 @@ public class BeanInfos implements Serializable {
         String chaine = null;
         if (map.containsKey(clef))
             chaine = map.get(clef);
+        //Retourner le résultat :
         return chaine;
     }
     
@@ -80,40 +79,21 @@ public class BeanInfos implements Serializable {
                 this.add(rs.getString("infLibelle"),rs.getString("infInfo"));
             }
 
+            //Fermeture du résultat :
             rs.close();
+            
+            //Fermeture de l'instruction :
             stmt.close();
+            
+            //Fermeture de la connexion :
+            connexion.close();
+            
         } catch (SQLException sqlEx) {
             throw new Exception("Erreur SQL lors de la lecture des " +
                     "informations :<br />" + sqlEx.getErrorCode() + " " +
                     sqlEx.getMessage());
         }
 
-        try {
-            connexion.close();
-        } catch (SQLException sqlEx) {
-            throw new Exception("Erreur SQL lors de la fermeture de la " +
-                    "connexion servant à lire les informations :<br />" +
-                    sqlEx.getErrorCode() + " " + sqlEx.getMessage());
-        }
     }
         
-        
-    
 }
-
-/*Réserve :
-TODO :
-infLibelle
-"Adresse"
-"Courriel service clients"
-"Fax service clients"
-"Forme juridique"
-"Horaire fermé"
-"Horaire Lundi-Vendredi"
-"Horaire Samedi"
-"Nom"
-"SIREN"
-"SIRET"
-"Téléphone service clients"
-
-*/

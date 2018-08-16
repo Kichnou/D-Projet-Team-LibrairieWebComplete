@@ -9,6 +9,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style type="text/css">
+        <jsp:include page="../css/styleClient.css"/>
+        </style>
         <title>Changement de votre mot de passe</title>
     </head>
     <body>
@@ -19,14 +22,13 @@
         <form action='Controller' method='post'>
             <input type="hidden" name="section" value="clientChangementMotDePasse" />
             Bonjour, ${cliCivilite} ${cliNom} ${cliPrenom}.<br>
-            Votre e-mail actuel : ${cliEmail}<br>
-            <font color='red'>Les champs indiqués par une (*) doivent être remplis.</font><br>
-            (*) Nouveau mot de passe : <input type='password' name='password' required /><br>
-            (*) Confirmation de votre nouveau mot de passe : <input type='password' name='confirmationpassword' onforminput="setCustomValidity(value != password.value ? 'Les deux mots de passe sont différents !' : '')" required /><br>
+            <p>Votre e-mail actuel : ${cliEmail}</p>
+            <p class="obligatoire">Les champs indiqués par une étoile (*) doivent être remplis.</p>
+            (*) Nouveau mot de passe : <input type='password' name='motdepasse' required /><br>
+            (*) Confirmation de votre nouveau mot de passe : <input type='password' name='confirmationmotdepasse' onforminput="setCustomValidity(value != motdepasse.value ? 'Les deux mots de passe sont différents !' : '')" required /><br>
             <input type='submit' name='validerNouveauMotDePasse' value='Valider' />
         </form>
-        <font color='red'>${messageErreurChangementMotDePasse}</font>
-	<!-- TODO : cf JFrameChangementMotDePasseEmploye.java -->
+        <p class="erreur">${messageErreurChangementMotDePasse}</p>
         <jsp:include page="../bottom.jsp" flush="true" />
     </body>
 </html>
